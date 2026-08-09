@@ -10,39 +10,38 @@ Running Academic Pages locally with Ruby and Jekyll gives you the fastest feedba
 
 You need **ruby-dev**, **ruby-bundler**, and **nodejs** installed on your machine before you can run the Jekyll dev server.
 
-<Tabs>
-  <Tab title="Linux / WSL">
-    On most Linux distributions and [Windows Subsystem for Linux (WSL)](https://learn.microsoft.com/en-us/windows/wsl/about), install the three packages with `apt`:
+**Linux / WSL**
 
-    ```bash
-    sudo apt install ruby-dev ruby-bundler nodejs
-    ```
+On most Linux distributions and [Windows Subsystem for Linux (WSL)](https://learn.microsoft.com/en-us/windows/wsl/about), install the three packages with `apt`:
 
-    <Note>
-      If `apt` reports `Unable to locate package ruby-bundler` or `Unable to locate package nodejs`, refresh your package index first and then retry:
+```bash
+sudo apt install ruby-dev ruby-bundler nodejs
+```
 
-      ```bash
-      sudo apt update && sudo apt upgrade -y
-      sudo apt install ruby-dev ruby-bundler nodejs
-      ```
-    </Note>
+<Note>
+  If `apt` reports `Unable to locate package ruby-bundler` or `Unable to locate package nodejs`, refresh your package index first and then retry:
+</Note>
 
-    Some Linux environments also require a few additional build tools before native gem extensions can compile:
+```bash
+sudo apt update && sudo apt upgrade -y
+sudo apt install ruby-dev ruby-bundler nodejs
+```
 
-    ```bash
-    sudo apt install build-essential gcc make
-    ```
-  </Tab>
-  <Tab title="macOS">
-    On macOS, use [Homebrew](https://brew.sh/) to install Ruby and Node, then install Bundler through RubyGems:
+Some Linux environments also require a few additional build tools before native gem extensions can compile:
 
-    ```bash
-    brew install ruby
-    brew install node
-    gem install bundler
-    ```
-  </Tab>
-</Tabs>
+```bash
+sudo apt install build-essential gcc make
+```
+
+**macOS**
+
+On macOS, use [Homebrew](https://brew.sh/) to install Ruby and Node, then install Bundler through RubyGems:
+
+```bash
+brew install ruby
+brew install node
+gem install bundler
+```
 
 ## Installing Ruby Gems
 

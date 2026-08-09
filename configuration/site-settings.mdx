@@ -1,7 +1,7 @@
 ---
-title: "Configuring Your Academic Pages Site Settings"
+title: "Configuring Site Settings in Academic Pages _config.yml"
 sidebarTitle: "Site Settings"
-description: "Learn how to configure every key option in _config.yml — from locale and URL to plugins, analytics, comments, SEO, collections, and page defaults."
+description: "Configure every key option in _config.yml — locale, URL, analytics, comments, SEO, plugins, collections, and page defaults for your academic site."
 ---
 
 The `_config.yml` file in the root of your repository is the master control file for your Academic Pages site. Almost every site-wide behavior — your title, URL, analytics provider, comment system, and the structure of your content collections — is driven by a single edit to this file. Jekyll reads it at build time, so you must restart the local server (`jekyll serve`) after making any changes.
@@ -255,10 +255,14 @@ exclude:
   - assets/js/vendor
   - CHANGELOG
   - Capfile
+  - config
   - Dockerfile
   - Gemfile
   - Gruntfile.js
+  - gulpfile.js
   - LICENSE
+  - local
+  - log
   - node_modules
   - package.json*
   - Rakefile

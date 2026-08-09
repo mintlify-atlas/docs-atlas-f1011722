@@ -1,5 +1,5 @@
 ---
-title: "Customizing the Site Navigation Menu"
+title: "Customizing the Site Navigation Menu in Academic Pages"
 sidebarTitle: "Navigation"
 description: "Learn how _data/navigation.yml controls the top navigation bar — add, remove, or reorder links and choose between Markdown and JSON CV formats."
 ---
@@ -110,27 +110,22 @@ main:
 
 Academic Pages ships with two distinct CV pages, and the navigation file contains entries for both — but only one should be active at a time.
 
-<Tabs>
-  <Tab title="Markdown CV (default)">
-    The default CV page lives at `_pages/cv.md` with the permalink `/cv/`. It is a standard Markdown file that you edit by hand. Enable it in `navigation.yml`:
+The **Markdown CV** (default) lives at `_pages/cv.md` with the permalink `/cv/`. It is a standard Markdown file that you edit by hand. To use it, enable this entry in `navigation.yml`:
 
-    ```yaml _data/navigation.yml
-    - title: "CV"
-      url: /cv/
-    ```
-  </Tab>
-  <Tab title="JSON-generated CV">
-    The JSON CV page lives at `_pages/cv-json.md` with the permalink `/cv-json/`. It renders a CV from structured data via `_includes/cv-template.html` and provides PDF download links. To switch to this format, comment out the Markdown CV entry and uncomment the JSON entry:
+```yaml _data/navigation.yml
+- title: "CV"
+  url: /cv/
+```
 
-    ```yaml _data/navigation.yml
-    # - title: "CV"
-    #   url: /cv/
+The **JSON-generated CV** lives at `_pages/cv-json.md` with the permalink `/cv-json/`. It renders a CV from structured data via `_includes/cv-template.html` and provides PDF download links. To switch to this format, comment out the Markdown CV entry and uncomment the JSON entry:
 
-    - title: "CV"
-      url: /cv-json/
-    ```
-  </Tab>
-</Tabs>
+```yaml _data/navigation.yml
+# - title: "CV"
+#   url: /cv/
+
+- title: "CV"
+  url: /cv-json/
+```
 
 <Warning>
   Only one of the two CV entries should be active at a time. Having both uncommented will result in two "CV" links appearing in the navigation bar.

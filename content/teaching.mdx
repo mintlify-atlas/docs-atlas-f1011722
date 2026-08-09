@@ -1,7 +1,7 @@
 ---
-title: "Adding Teaching Experience to Your Academic Site"
+title: "Adding Teaching Experience to Your Academic Pages Site"
 sidebarTitle: "Teaching"
-description: "Learn how to create teaching entries in the _teaching/ collection, populate the required front matter fields, and have entries appear on the teaching page and CV."
+description: "Learn how to create teaching entries in the _teaching/ collection, set front matter fields, and have entries appear on the teaching page and CV."
 ---
 
 Teaching experience entries live in the `_teaching/` directory as individual Markdown files. Each file represents one course, workshop, or other teaching role. Jekyll collects every file in that directory and renders them on your `/teaching/` archive page and automatically includes them in the Teaching section of your CV page — no extra wiring needed.
@@ -10,7 +10,7 @@ Teaching experience entries live in the `_teaching/` directory as individual Mar
 
 The recommended naming pattern for teaching files is `YYYY-season-course-name.md`, where the year and season reflect when the course ran:
 
-```
+```text
 _teaching/2014-spring-teaching-1.md
 _teaching/2015-spring-teaching-2.md
 ```
@@ -65,7 +65,7 @@ Heading 3
 
 The `type` field accepts any descriptive string. The two values used in the sample files are:
 
-```
+```yaml
 type: "Undergraduate course"
 type: "Workshop"
 ```
