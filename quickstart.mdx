@@ -1,47 +1,245 @@
 ---
-title: "Quickstart"
-description: "Begin with a guide on the fastest path to a successful outcome"
+title: "Quickstart: Launch Your Academic Pages Site on GitHub"
+sidebarTitle: "Quickstart"
+description: "Fork the Academic Pages template, rename the repo, configure _config.yml with your profile details, and have a live academic website in minutes."
 ---
 
-Describe how someone begins using your product. What is the first thing they need to do? Are there any prerequisites?
+Academic Pages is designed so that you can go from zero to a live public website without installing any software. All you need is a free GitHub account. The steps below walk you through forking the template, configuring the essential fields in `_config.yml`, and verifying that GitHub Pages has built and published your site. If you later want to work locally — for faster iteration or to preview changes before pushing — a separate section at the bottom covers that workflow.
 
-A quickstart should take someone from zero to using your product. They'll get a quick win and a sense of what they can accomplish.
-
-## Prerequisites
-
-Before you begin, you must have:
-
-- Requirement one (for example, Node.js 18+, a free account, an API key)
-- Requirement two (for example, a compatible device, a compatible browser, a compatible operating system)
-
-## Get started
+## Create Your Site from the Template
 
 <Steps>
-  <Step title="Install">
-    Describe how to install your product or sign up.
-
-    ```bash
-    npm install your-package
-    ```
+  <Step title="Create a GitHub account">
+    If you don't already have one, register at [github.com](https://github.com) and confirm your email address. Email confirmation is required before GitHub Pages will activate on your repository.
   </Step>
-  <Step title="Configure">
-    Describe any setup or configuration needed before first use.
 
-    ```bash
-    your-cli init
-    ```
+  <Step title="Use the template">
+    Go to [github.com/academicpages/academicpages.github.io](https://github.com/academicpages/academicpages.github.io) and click the **Use this template** button in the top right of the page, then choose **Create a new repository**.
   </Step>
-  <Step title="Run it">
-    Show the first thing a user does to see it working.
 
-    ```bash
-    your-cli start
-    ```
+  <Step title="Name your repository">
+    On the "New repository" page, enter your repository name as exactly `[yourusername].github.io` — replacing `[yourusername]` with your GitHub username. This naming convention is what tells GitHub Pages to serve the repository as your personal site at that same URL.
+
+    <Warning>
+      The repository name must match your GitHub username precisely (case-sensitive on some systems). If the name doesn't match, GitHub Pages will still build the site but it will be served at a subpath URL rather than the root `yourusername.github.io`.
+    </Warning>
+  </Step>
+
+  <Step title="Wait for the initial build">
+    After creating the repository, GitHub Pages automatically begins its first build. Navigate to **Settings → Pages** in your new repository to watch the status. A green check mark next to the latest commit in the repository's main view also indicates a successful build. The initial build usually completes within one to two minutes.
   </Step>
 </Steps>
 
-<Tip>
-  Give people a way to get help. This could be a link to a support page, a chat with a customer support agent, or a forum for your product.
+## Configure `_config.yml`
 
-  Example: Need help? Reach out to us at [support@yourcompany.com](mailto:support@yourcompany.com).
+Once the repository exists, edit `_config.yml` to replace the placeholder values with your own information. This single file controls the site title, your sidebar profile, the base URL, and nearly every site-wide setting.
+
+### Essential fields to update
+
+The fields below must be changed for your site to work correctly and display your information:
+
+```yaml
+# _config.yml
+
+# Basic Site Settings
+locale    : "en-US"
+site_theme: "default"  # "default", "air", "sunrise", "mint", "dirt", "contrast"
+title     : "Jane Smith"
+name      : &name "Jane Smith"
+description: &description "Jane Smith's academic portfolio"
+url       : https://janesmith.github.io   # must match your actual repository URL
+baseurl   : ""                            # leave blank for a username.github.io repo
+repository: "janesmith/janesmith.github.io"
+```
+
+<Warning>
+  The `url` field must exactly match the URL GitHub assigned to your Pages site. If it is wrong, links, feeds, and social sharing metadata will all point to the wrong domain. Double-check it in **Settings → Pages** after your first build.
+</Warning>
+
+### Author sidebar
+
+All of the information shown in the left-hand sidebar — your photo, name, bio, and profile links — comes from the `author:` block. Only fields with values are rendered; leave a field blank and its icon and link will not appear on the site.
+
+```yaml
+# _config.yml — author block
+author:
+  avatar    : "profile.png"          # filename inside /images/
+  name      : "Jane Smith"
+  pronouns  : "she/her"
+  bio       : "Assistant Professor of Computer Science at Example University."
+  location  : "Cambridge, MA, USA"
+  employer  : "Example University"
+  email     : "jane@example.edu"
+
+  # Academic profiles — paste full URLs
+  googlescholar : "https://scholar.google.com/citations?user=YOURID"
+  orcid         : "https://orcid.org/0000-0000-0000-0000"
+  github        : "janesmith"
+  linkedin      : "janesmith"
+```
+
+### Publication categories
+
+The `publication_category:` block controls how publications are grouped on the Publications page. Edit the category `title` values to match your preferred headings:
+
+```yaml
+# _config.yml — publication categories
+publication_category:
+  books:
+    title: 'Books'
+  manuscripts:
+    title: 'Journal Articles'
+  conferences:
+    title: 'Conference Papers'
+```
+
+Each publication file in `_publications/` references one of these category keys (`books`, `manuscripts`, or `conferences`) via its `category:` front matter field.
+
+### Analytics and comments (optional)
+
+Add Google Analytics or a comment provider by filling in the relevant blocks. Leave `provider` set to `"false"` to disable each feature:
+
+```yaml
+# _config.yml — analytics
+analytics:
+  provider: "google-analytics-4"   # or "false" to disable
+  google:
+    tracking_id: "G-XXXXXXXXXX"
+
+# _config.yml — comments
+comments:
+  provider: "disqus"               # or "false" to disable
+  disqus:
+    shortname: "your-shortname"
+```
+
+## Edit Files Directly on GitHub.com
+
+You do not need to clone the repository or install anything locally to make changes. Every Markdown and YAML file in the repository can be edited right in the browser.
+
+<Steps>
+  <Step title="Navigate to the file">
+    On your repository's main page, click through the folder structure to find the file you want to edit — for example, `_config.yml` in the root, or a file like `_publications/2024-01-01-my-paper.md`.
+  </Step>
+
+  <Step title="Open the editor">
+    Click the **pencil icon** (Edit this file) in the top right of the file preview, to the right of the Raw and History buttons.
+  </Step>
+
+  <Step title="Make your changes">
+    Edit the file content directly in the browser editor. GitHub provides basic syntax highlighting for Markdown and YAML.
+  </Step>
+
+  <Step title="Commit the change">
+    Scroll to the bottom of the page, write a short commit message describing what you changed, and click **Commit changes**. GitHub Pages will automatically trigger a new build within seconds.
+  </Step>
+</Steps>
+
+You can also create new files (click **Add file → Create new file** from inside a directory) and upload binary assets like PDFs and images (**Add file → Upload files**). Files uploaded to the `files/` directory are publicly accessible at `https://[yourusername].github.io/files/filename.pdf`.
+
+<Tip>
+  To delete a file in the GitHub web interface, open it and click the **trash can icon** to the right of the pencil icon. Confirm the deletion by committing the change.
 </Tip>
+
+## Edit Files Locally
+
+Working locally gives you live preview with auto-reload, which is especially useful when making many changes at once. You will need Ruby, Bundler, and Node.js installed.
+
+<Steps>
+  <Step title="Install dependencies (Linux / WSL)">
+    ```bash
+    sudo apt install ruby-dev ruby-bundler nodejs
+    ```
+
+    On macOS with Homebrew:
+    ```bash
+    brew install ruby node
+    gem install bundler
+    ```
+  </Step>
+
+  <Step title="Clone your repository">
+    ```bash
+    git clone https://github.com/[yourusername]/[yourusername].github.io.git
+    cd [yourusername].github.io
+    ```
+  </Step>
+
+  <Step title="Install Ruby gems">
+    ```bash
+    bundle install
+    ```
+
+    If you see a file permission error, install gems into the project directory instead:
+    ```bash
+    bundle config set --local path 'vendor/bundle'
+    bundle install
+    ```
+  </Step>
+
+  <Step title="Serve the site locally">
+    ```bash
+    jekyll serve -l -H localhost
+    ```
+
+    Or, to use the exact gem versions from your lock file:
+    ```bash
+    bundle exec jekyll serve -l -H localhost
+    ```
+
+    The site will be available at [http://localhost:4000](http://localhost:4000). The `-l` flag enables live reload — the browser refreshes automatically when you save a Markdown or HTML file.
+
+    <Note>
+      Changes to `_config.yml` are not picked up by the live-reload watcher. Stop the server (`Ctrl+C`) and restart it after editing that file.
+    </Note>
+  </Step>
+
+  <Step title="Push changes to GitHub">
+    When you are happy with your changes, commit and push them to publish:
+    ```bash
+    git add .
+    git commit -m "Update publications list"
+    git push
+    ```
+
+    GitHub Pages will build and deploy the updated site automatically.
+  </Step>
+</Steps>
+
+## Using Docker
+
+If you prefer to avoid installing Ruby and Node.js directly on your machine, the repository includes a `Dockerfile` and a `docker-compose.yaml`. With [Docker](https://www.docker.com/) installed, run:
+
+```bash
+chmod -R 777 .
+docker compose up
+```
+
+The site will be accessible at [http://localhost:4000](http://localhost:4000).
+
+<Tip>
+  If you use Visual Studio Code, the repository also ships with a Dev Container configuration. VS Code will prompt you to reopen the project in the container, which automatically installs all dependencies and serves the site at `http://localhost:4000` with live reload.
+</Tip>
+
+## Verify Your Live Site
+
+After any push, return to **Settings → Pages** in your repository to confirm the build succeeded. You can also check the latest commit in the repository's main file view:
+
+| Status indicator | Meaning |
+|---|---|
+| Green check mark ✅ | Build succeeded; site is live |
+| Orange circle 🟠 | Build in progress |
+| Red X ❌ | Build failed; check the Actions tab for error details |
+| No icon | Not yet built |
+
+Once the build is green, your site is live at `https://[yourusername].github.io`.
+
+## Next Steps
+
+With your site live and `_config.yml` configured, the next tasks are adding your actual content:
+
+- Replace the placeholder files in `_publications/`, `_talks/`, `_teaching/`, and `_portfolio/` with your own Markdown files.
+- Update `_pages/cv.md` with your real CV data, or populate `_data/cv.json` if you prefer the JSON-driven layout.
+- Add your profile photo as `images/profile.png` (the filename is set via `author.avatar` in `_config.yml`).
+- Upload PDFs (papers, slides, posters) to the `files/` directory so they are accessible at `https://[yourusername].github.io/files/`.
+- Use the scripts in `markdown_generator/` to batch-generate publication and talk Markdown files from a CSV or BibTeX file.

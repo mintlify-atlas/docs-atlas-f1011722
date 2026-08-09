@@ -1,0 +1,362 @@
+---
+title: "JSON-Based CV Page: Structure, Schema, and Generation"
+sidebarTitle: "CV JSON"
+description: "Learn how the JSON CV page works, what the cv.json schema contains, and how to generate it automatically from your Markdown CV and collections."
+---
+
+Academic Pages includes an alternative CV page (`_pages/cv-json.md`) that reads its content from a structured JSON file (`_data/cv.json`) rather than from hand-written Markdown sections. The JSON file follows the [JSONResume](https://jsonresume.org/) schema and is rendered by the `_includes/cv-template.html` Liquid template into a clean, consistently formatted CV page. This approach is useful when you want a single authoritative data source for your CV that can also be consumed by other tools.
+
+## The `cv-json.md` Page File
+
+The page itself is minimal — all the rendering logic lives in `cv-template.html`:
+
+```yaml
+---
+layout: archive
+title: "CV"
+permalink: /cv-json/
+author_profile: false
+redirect_from:
+  - /resume-json
+---
+```
+
+```html
+{% include base_path %}
+
+{% include cv-template.html %}
+
+<div class="cv-download-links">
+  <a href="{{ base_path }}/files/cv.pdf" class="btn btn--primary">Download CV as PDF</a>
+  <a href="{{ base_path }}" class="btn btn--inverse">View Markdown CV</a>
+</div>
+```
+
+Note that `author_profile: false` — the JSON CV page hides the sidebar to give the CV content more horizontal space. The page also includes download and back-navigation links below the rendered CV.
+
+## The `_data/cv.json` Schema
+
+`_data/cv.json` is a JSON object whose top-level keys map to CV sections. Jekyll makes the entire file available in Liquid templates as `site.data.cv`. The `cv-template.html` include renders each key as a section heading if it contains at least one entry.
+
+### Top-level structure
+
+```json
+{
+  "basics": { ... },
+  "work": [],
+  "education": [],
+  "skills": [],
+  "languages": [],
+  "interests": [],
+  "references": [],
+  "publications": [],
+  "presentations": [],
+  "teaching": [],
+  "portfolio": []
+}
+```
+
+### `basics`
+
+Personal and contact information displayed in the CV header:
+
+```json
+"basics": {
+  "name": "Your Sidebar Name",
+  "email": "none@example.org",
+  "phone": "",
+  "website": "https://academicpages.github.io",
+  "summary": "Currently employed at Red Brick University. Short biography for the left-hand sidebar",
+  "location": {
+    "address": "",
+    "postalCode": "",
+    "city": "Earth",
+    "countryCode": "US",
+    "region": ""
+  },
+  "profiles": [
+    {
+      "network": "Google Scholar",
+      "username": "",
+      "url": "https://scholar.google.com/citations?user=PS_CX0AAAAAJ"
+    },
+    {
+      "network": "ORCID",
+      "username": "",
+      "url": "https://orcid.org/yourorcidurl"
+    },
+    {
+      "network": "GitHub",
+      "username": "academicpages",
+      "url": "https://github.com/academicpages"
+    }
+  ]
+}
+```
+
+The `profiles` array renders as a row of linked icons in the CV header. Each entry needs a `network` name and a `url`; `username` is optional.
+
+### `education`
+
+```json
+"education": [
+  {
+    "institution": "GitHub University",
+    "area": "Ph.D in Version Control Theory",
+    "studyType": "",
+    "startDate": "",
+    "endDate": "2018",
+    "gpa": null,
+    "courses": []
+  }
+]
+```
+
+### `work`
+
+```json
+"work": [
+  {
+    "company": "GitHub University",
+    "position": "Research Assistant",
+    "website": "",
+    "startDate": "2015",
+    "endDate": "2016",
+    "summary": "",
+    "highlights": [
+      "Merging pull requests",
+      "Tagging issues"
+    ]
+  }
+]
+```
+
+### `publications`
+
+Each entry maps to a paper or article:
+
+```json
+"publications": [
+  {
+    "name": "Paper Title Number 1",
+    "publisher": "Journal 1",
+    "releaseDate": "2009-10-01",
+    "website": "https://academicpages.github.io/files/paper1.pdf",
+    "summary": "This paper is about the number 1. The number 2 is left for future work."
+  }
+]
+```
+
+### `presentations`
+
+Talks and tutorials. Note the key is `presentations`, not `talks`:
+
+```json
+"presentations": [
+  {
+    "name": "Talk 1 on Relevant Topic in Your Field",
+    "event": "UC San Francisco, Department of Testing",
+    "date": "2012-03-01",
+    "location": "San Francisco, CA, USA",
+    "description": ""
+  }
+]
+```
+
+### `teaching`
+
+```json
+"teaching": [
+  {
+    "course": "Teaching experience 1",
+    "institution": "University 1, Department",
+    "date": "2014-01-01",
+    "role": "Undergraduate course",
+    "description": ""
+  }
+]
+```
+
+### `portfolio`
+
+```json
+"portfolio": [
+  {
+    "name": "Portfolio item number 1",
+    "category": "portfolio",
+    "date": "",
+    "url": "",
+    "description": "Short description of portfolio item number 1"
+  }
+]
+```
+
+### Other top-level arrays
+
+| Key | Item fields |
+|---|---|
+| `skills` | `name`, `level`, `keywords` (array) |
+| `languages` | `language`, `fluency` |
+| `interests` | `name`, `keywords` (array) |
+| `references` | `name`, `reference` |
+
+Empty arrays (`[]`) are safe to leave in place — `cv-template.html` checks `cv.<section>.size > 0` before rendering each section, so empty arrays produce no output.
+
+## How `cv-template.html` Renders the JSON
+
+`_includes/cv-template.html` starts by assigning the data file to a variable:
+
+```liquid
+{% assign cv = site.data.cv %}
+```
+
+It then conditionally renders each section. For example, the Education section:
+
+```liquid
+{% if cv.education.size > 0 %}
+<div class="cv-section">
+  <h2>Education</h2>
+  <ul class="cv-list">
+    {% for education in cv.education %}
+    <li class="cv-item">
+      <div class="cv-item-header">
+        <div class="cv-item-title">{{ education.area }}</div>
+        <div class="cv-item-date">{{ education.endDate }}</div>
+      </div>
+      <div class="cv-item-content">
+        <div class="cv-item-subtitle">{{ education.institution }}</div>
+        {% if education.gpa %}
+        <div class="cv-item-detail">GPA: {{ education.gpa }}</div>
+        {% endif %}
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+```
+
+The `cv-layout.html` layout wraps the rendered content with a dedicated stylesheet (`assets/css/cv-layout.css`) and the standard site header and footer.
+
+## Generating `cv.json` Automatically
+
+Instead of editing `_data/cv.json` by hand, you can generate it from your existing `_pages/cv.md` file plus your site's collections using `scripts/cv_markdown_to_json.py`.
+
+### What the script does
+
+The Python script reads four sources and combines them into a single JSON file:
+
+1. **`_pages/cv.md`** — parses Education, Work experience, and Skills sections from Markdown
+2. **`_config.yml`** — extracts author info (name, email, location, employer, bio, social profiles)
+3. **`_publications/*.md`** — reads `title`, `venue`, `date`, `paperurl`, and `excerpt` front matter from each publication file
+4. **`_talks/*.md`** — reads `title`, `venue`, `date`, `location`, and `excerpt` from each talk file
+5. **`_teaching/*.md`** — reads `title`, `venue`, `date`, `type`, and `excerpt` from each teaching file
+6. **`_portfolio/*.md`** — reads `title`, `collection`, `date`, `permalink`, and `excerpt` from each portfolio file
+
+### Running the script
+
+<Steps>
+  <Step title="Ensure Python 3 is installed">
+    The script requires Python 3 and the `pyyaml` package. Verify with:
+
+    ```bash
+    python3 --version
+    ```
+  </Step>
+  <Step title="Run cv_markdown_to_json.py">
+    Run the script from the repository root, providing paths to the Markdown CV, the output JSON file, and the config:
+
+    ```bash
+    python3 scripts/cv_markdown_to_json.py \
+      --input _pages/cv.md \
+      --output _data/cv.json \
+      --config _config.yml
+    ```
+
+    On success the script prints:
+    ```
+    Successfully converted _pages/cv.md to _data/cv.json
+    ```
+  </Step>
+  <Step title="Review the generated file">
+    Open `_data/cv.json` and verify the output. Author information comes from `_config.yml`'s `author:` block; collection data comes from each item's front matter.
+  </Step>
+  <Step title="Commit the updated cv.json">
+    ```bash
+    git add _data/cv.json
+    git commit -m "Update cv.json"
+    git push
+    ```
+  </Step>
+</Steps>
+
+### Command-line arguments
+
+| Flag | Short | Required | Description |
+|---|---|---|---|
+| `--input` | `-i` | Yes | Path to the Markdown CV file (e.g. `_pages/cv.md`) |
+| `--output` | `-o` | Yes | Path to write the JSON file (e.g. `_data/cv.json`) |
+| `--config` | `-c` | No | Path to `_config.yml` for author info |
+
+### Using the shell wrapper
+
+`scripts/update_cv_json.sh` is a convenience wrapper that hard-codes all three paths relative to the repository root, so you do not need to type the full command each time:
+
+```bash
+bash scripts/update_cv_json.sh
+```
+
+The script:
+1. Resolves the repository root automatically using `${BASH_SOURCE[0]}`
+2. Verifies that both `cv_markdown_to_json.py` and `_pages/cv.md` exist before running
+3. Calls `python3 scripts/cv_markdown_to_json.py` with the resolved paths
+4. On success, optionally offers to run `bundle exec jekyll serve` so you can preview changes immediately
+
+<Warning>
+The shell script calls `bundle exec jekyll serve` interactively if you answer `y` to its prompt. This keeps the terminal busy for the duration of the dev server session. Run the Python script directly if you only need to regenerate `cv.json` without starting a server.
+</Warning>
+
+## Switching Between Markdown and JSON CV
+
+Only one CV entry should be active in `_data/navigation.yml` at a time. The file ships with the Markdown CV enabled and the JSON CV commented out:
+
+```yaml
+# _data/navigation.yml
+main:
+  # ...
+
+  - title: "CV"
+    url: /cv/
+
+  # - title: "CV"
+  #   url: /cv-json/
+```
+
+<Tabs>
+  <Tab title="Use Markdown CV (default)">
+    Keep the `/cv/` entry uncommented and leave `/cv-json/` commented out:
+
+    ```yaml
+    - title: "CV"
+      url: /cv/
+
+    # - title: "CV"
+    #   url: /cv-json/
+    ```
+  </Tab>
+  <Tab title="Use JSON CV">
+    Comment out the `/cv/` entry and uncomment `/cv-json/`:
+
+    ```yaml
+    # - title: "CV"
+    #   url: /cv/
+
+    - title: "CV"
+      url: /cv-json/
+    ```
+  </Tab>
+</Tabs>
+
+<Note>
+Both pages remain built regardless of which navigation entry is active. Switching the navigation entry only changes which one is linked from the header — both URLs remain accessible directly.
+</Note>

@@ -1,0 +1,116 @@
+---
+title: "Academic Pages Markdown Generator Tools: An Overview"
+sidebarTitle: "Overview"
+description: "Learn how Academic Pages' Python scripts and Jupyter notebooks automate generating publication and talk pages from spreadsheet data."
+---
+
+The `markdown_generator/` directory ships with a set of Python scripts and Jupyter notebooks that convert structured spreadsheet data into the individual Markdown files that Academic Pages needs to render your publications and talks pages. Instead of creating each `.md` file by hand, you maintain a single spreadsheet, run a generator, and commit the resulting files to your repository.
+
+## Two forms of every generator
+
+Each generator task is available in two forms that share the same underlying logic but suit different workflows.
+
+<CodeGroup>
+
+```text Python scripts (.py)
+publications.py
+talks.py
+pubsFromBib.py
+```
+
+```text Jupyter notebooks (.ipynb)
+publications.ipynb
+talks.ipynb
+PubsFromBib.ipynb
+OrcidToBib.ipynb
+```
+
+</CodeGroup>
+
+**Python scripts** are plain `.py` files intended to be run from the command line. They are written to have minimal external dependencies — relying only on the Python standard library where possible — so that they can also be executed inside GitHub Actions workflows when deploying your site from within GitHub.
+
+**Jupyter notebooks** are `.ipynb` files that contain the same core logic alongside richer inline documentation and explanatory prose cells. They are well-suited to local, interactive use when you want to inspect intermediate results or follow along with the process step by step.
+
+<Note>
+The `.py` and `.ipynb` variants for each generator produce the same output. Choose whichever form fits your environment; the generated Markdown files are identical.
+</Note>
+
+## Typical workflow
+
+The generators are designed around a simple, repeatable cycle.
+
+<Steps>
+
+### Maintain your spreadsheet
+
+Keep your publications or talks data in a `.tsv` (tab-separated) or `.csv` (comma-separated) file inside `markdown_generator/`. The template ships with `publications.tsv`, `publications.csv`, and `talks.tsv` as starting points.
+
+### Run the generator
+
+Execute the appropriate Python script or Jupyter notebook from the `markdown_generator/` directory. The script reads your spreadsheet and writes individual `.md` files into `_publications/` or `_talks/`.
+
+### Review the output
+
+Open the generated `.md` files to confirm the front matter and page content look correct before committing.
+
+### Commit the generated files
+
+Add both your updated spreadsheet and the newly generated `.md` files to version control and push. GitHub Pages will rebuild your site automatically.
+
+</Steps>
+
+## Available generators
+
+| File | Purpose |
+|------|---------|
+| `publications.py` / `publications.ipynb` | Generates `_publications/*.md` from a TSV or CSV |
+| `talks.py` / `talks.ipynb` | Generates `_talks/*.md` from a TSV or CSV |
+| `pubsFromBib.py` / `PubsFromBib.ipynb` | Generates `_publications/*.md` from BibTeX files |
+| `OrcidToBib.ipynb` | Fetches your works from ORCID and converts them to BibTeX |
+
+## The talkmap generator
+
+After you have generated your talk files in `_talks/`, you can run a separate generator to produce an interactive Leaflet cluster map of every location where you have given a talk.
+
+Two files provide this functionality from the **repository root** (not from `markdown_generator/`):
+
+- `talkmap.py` — Python script, uses `frontmatter`, `geopy`, and `getorg`
+- `talkmap.ipynb` — Jupyter notebook equivalent
+
+The script reads every `.md` file in `_talks/`, extracts the `location` front matter field, geocodes it using the Nominatim service, and writes the map data and HTML into a `talkmap/` directory. The output includes `talkmap/map.html` and `talkmap/org-locations.js`.
+
+```bash
+# Run from the repository root
+python3 talkmap.py
+```
+
+<Warning>
+`talkmap.py` requires `frontmatter`, `geopy`, and `getorg` — packages that are not part of the Python standard library. Install them before running: `pip install python-frontmatter geopy getorg`.
+</Warning>
+
+To display a link to the map on your Talks page, set `talkmap_link` to `true` in `_config.yml`:
+
+```yaml
+talkmap_link: true   # change to true to add link to talkmap on talks page
+```
+
+## GitHub Actions automation
+
+The repository includes `.github/workflows/scrape_talks.yml`, a workflow that regenerates the talkmap automatically whenever files in `talks/`, `_talks/`, or `talkmap.ipynb` are pushed. It installs the required Python packages, executes `talkmap.ipynb` via `jupyter nbconvert`, and commits the updated map files back to the repository.
+
+```yaml
+on:
+  push:
+    paths:
+      - 'talks/**'
+      - '_talks/**'
+      - 'talkmap.ipynb'
+```
+
+<Tip>
+If you prefer to regenerate the talkmap manually and commit the output yourself, you can disable or delete `scrape_talks.yml`. The workflow is optional — the generated files in `talkmap/` are static and do not need to be rebuilt on every push unless your talk locations change.
+</Tip>
+
+## Generators vs. manual file creation
+
+The generators are most useful when you have many entries or want a single source of truth in a spreadsheet. For a small number of entries, or when you need fine-grained control over a specific page's content, creating or editing `.md` files by hand is perfectly valid. The generators and manually created files coexist without conflict — all `.md` files in `_publications/` and `_talks/` are treated the same by Jekyll regardless of how they were created.

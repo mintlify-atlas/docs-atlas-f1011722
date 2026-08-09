@@ -1,72 +1,91 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
-  "name": "Mintlify Starter Kit",
+  "name": "Academic Pages",
+  "theme": "willow",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#3464cc"
   },
-  "favicon": "/favicon.svg",
-  "navigation": {
-    "pages": [
-      {
-        "group": "Getting Started",
-        "pages": [
-          "index",
-          "quickstart"
-        ]
-      }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
-  },
-  "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
-  },
+  "favicon": "https://media.brand.dev/f272502e-8db7-4b77-a7d2-3e77e6a2a846.png",
   "navbar": {
-    "links": [
-      {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
-      }
-    ],
     "primary": {
-      "type": "button",
-      "label": "Dashboard",
-      "href": "https://app.mintlify.com"
+      "type": "github",
+      "href": "https://github.com/academicpages/academicpages.github.io"
     }
-  },
-  "contextual": {
-    "options": [
-      "copy",
-      "view",
-      "chatgpt",
-      "claude",
-      "perplexity",
-      "mcp",
-      "cursor",
-      "vscode"
-    ]
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "github": "https://github.com/academicpages/academicpages.github.io"
     }
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Getting Started",
+        "groups": [
+          {
+            "group": "Introduction",
+            "pages": [
+              "introduction",
+              "quickstart"
+            ]
+          },
+          {
+            "group": "Configuration",
+            "pages": [
+              "configuration/site-settings",
+              "configuration/author-profile",
+              "configuration/navigation",
+              "configuration/themes"
+            ]
+          },
+          {
+            "group": "Local Development",
+            "pages": [
+              "local-development/ruby-jekyll",
+              "local-development/docker"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Content Guide",
+        "groups": [
+          {
+            "group": "Collections",
+            "pages": [
+              "content/publications",
+              "content/talks",
+              "content/teaching",
+              "content/portfolio",
+              "content/blog-posts"
+            ]
+          },
+          {
+            "group": "Pages & CV",
+            "pages": [
+              "content/pages",
+              "content/cv-markdown",
+              "content/cv-json"
+            ]
+          },
+          {
+            "group": "Markdown & Formatting",
+            "pages": [
+              "content/markdown-guide",
+              "content/math-diagrams",
+              "content/front-matter"
+            ]
+          },
+          {
+            "group": "Markdown Generators",
+            "pages": [
+              "generators/overview",
+              "generators/publications-generator",
+              "generators/talks-generator"
+            ]
+          }
+        ]
+      }
+    ]
   }
 }

@@ -1,0 +1,158 @@
+---
+title: "Customizing the Site Navigation Menu"
+sidebarTitle: "Navigation"
+description: "Learn how _data/navigation.yml controls the top navigation bar — add, remove, or reorder links and choose between Markdown and JSON CV formats."
+---
+
+The top navigation bar of your Academic Pages site is entirely controlled by `_data/navigation.yml`. Unlike `_config.yml`, this file does not require a server restart when you are running Jekyll locally — changes appear as soon as Jekyll regenerates the affected pages. Each entry in the `main:` list becomes one link in the horizontal header menu, rendered in exactly the order you define them.
+
+<Note>
+  Removing a link from `navigation.yml` only hides it from the header. The underlying page still exists and is still built by Jekyll — it simply won't have a navigation entry pointing to it. Visitors can still reach it via its direct URL.
+</Note>
+
+## File Structure
+
+The file contains a single top-level key, `main:`, whose value is a list of objects. Each object has two keys:
+
+```yaml _data/navigation.yml
+main:
+  - title: "Publications"
+    url: /publications/
+
+  - title: "Talks"
+    url: /talks/
+
+  - title: "Teaching"
+    url: /teaching/
+
+  - title: "Portfolio"
+    url: /portfolio/
+
+  - title: "Blog Posts"
+    url: /year-archive/
+
+  - title: "CV"
+    url: /cv/
+
+  # - title: "CV"
+  #   url: /cv-json/
+
+  - title: "Guide"
+    url: /markdown/
+```
+
+<ParamField path="main[].title" type="string" required>
+  The text label displayed in the navigation bar for this link.
+</ParamField>
+
+<ParamField path="main[].url" type="string" required>
+  The URL path this link points to. Paths are relative to your site's `baseurl`. All default entries use trailing slashes, which is consistent with the default `permalink` pattern in `_config.yml`.
+</ParamField>
+
+---
+
+## Adding a Navigation Item
+
+<Steps>
+  <Step title="Create the page">
+    Add a Markdown file to `_pages/` with a `permalink` front matter key matching the URL you intend to use. For example, create `_pages/resources.md` with `permalink: /resources/`.
+  </Step>
+  <Step title="Add an entry to navigation.yml">
+    Open `_data/navigation.yml` and append (or insert) a new list item:
+
+    ```yaml _data/navigation.yml
+    - title: "Resources"
+      url: /resources/
+    ```
+  </Step>
+  <Step title="Verify the order">
+    Navigation items are rendered left-to-right in the order they appear in the file. Move the new entry up or down the list to place it where you want it in the header.
+  </Step>
+</Steps>
+
+---
+
+## Removing a Navigation Item
+
+To remove a link from the header without deleting the page, either delete its two-line block entirely or comment it out with `#`:
+
+```yaml _data/navigation.yml
+  # - title: "Portfolio"
+  #   url: /portfolio/
+```
+
+The portfolio page and all individual portfolio item pages will still be built and accessible — they simply won't appear in the top menu.
+
+---
+
+## Reordering Navigation Items
+
+Cut and paste list entries to reorder them. The header renders items strictly in the order they appear in the file:
+
+```yaml _data/navigation.yml
+main:
+  - title: "Publications"
+    url: /publications/
+
+  - title: "CV"
+    url: /cv/
+
+  - title: "Talks"
+    url: /talks/
+
+  - title: "Teaching"
+    url: /teaching/
+```
+
+---
+
+## CV Format: Markdown vs. JSON
+
+Academic Pages ships with two distinct CV pages, and the navigation file contains entries for both — but only one should be active at a time.
+
+<Tabs>
+  <Tab title="Markdown CV (default)">
+    The default CV page lives at `_pages/cv.md` with the permalink `/cv/`. It is a standard Markdown file that you edit by hand. Enable it in `navigation.yml`:
+
+    ```yaml _data/navigation.yml
+    - title: "CV"
+      url: /cv/
+    ```
+  </Tab>
+  <Tab title="JSON-generated CV">
+    The JSON CV page lives at `_pages/cv-json.md` with the permalink `/cv-json/`. It renders a CV from structured data via `_includes/cv-template.html` and provides PDF download links. To switch to this format, comment out the Markdown CV entry and uncomment the JSON entry:
+
+    ```yaml _data/navigation.yml
+    # - title: "CV"
+    #   url: /cv/
+
+    - title: "CV"
+      url: /cv-json/
+    ```
+  </Tab>
+</Tabs>
+
+<Warning>
+  Only one of the two CV entries should be active at a time. Having both uncommented will result in two "CV" links appearing in the navigation bar.
+</Warning>
+
+---
+
+## Relationship to Page Permalinks
+
+The `url` values in `navigation.yml` must exactly match the `permalink` defined in the front matter of the corresponding page file. The default pages use these mappings:
+
+| Navigation title | URL in navigation.yml | Page source file |
+|---|---|---|
+| Publications | `/publications/` | `_pages/publications.html` |
+| Talks | `/talks/` | `_pages/talks.html` |
+| Teaching | `/teaching/` | `_pages/teaching.html` |
+| Portfolio | `/portfolio/` | `_pages/portfolio.html` |
+| Blog Posts | `/year-archive/` | `_pages/year-archive.html` |
+| CV | `/cv/` | `_pages/cv.md` |
+| CV (JSON) | `/cv-json/` | `_pages/cv-json.md` |
+| Guide | `/markdown/` | `_pages/markdown.md` |
+
+<Tip>
+  You can link to any URL from `navigation.yml`, not just pages in your own site. For example, you could add an entry pointing to an external profile page or a PDF hosted in your `/files/` directory.
+</Tip>

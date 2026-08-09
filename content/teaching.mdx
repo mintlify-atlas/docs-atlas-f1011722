@@ -1,0 +1,94 @@
+---
+title: "Adding Teaching Experience to Your Academic Site"
+sidebarTitle: "Teaching"
+description: "Learn how to create teaching entries in the _teaching/ collection, populate the required front matter fields, and have entries appear on the teaching page and CV."
+---
+
+Teaching experience entries live in the `_teaching/` directory as individual Markdown files. Each file represents one course, workshop, or other teaching role. Jekyll collects every file in that directory and renders them on your `/teaching/` archive page and automatically includes them in the Teaching section of your CV page — no extra wiring needed.
+
+## File naming convention
+
+The recommended naming pattern for teaching files is `YYYY-season-course-name.md`, where the year and season reflect when the course ran:
+
+```
+_teaching/2014-spring-teaching-1.md
+_teaching/2015-spring-teaching-2.md
+```
+
+<Note>
+Teaching files are iterated in reverse order on the `/teaching/` page. Using a year prefix ensures entries are sorted chronologically; the season portion is descriptive and not parsed by Jekyll.
+</Note>
+
+## Front matter fields
+
+| Field | Required | Description |
+|---|---|---|
+| `title` | ✅ | Name of the course or teaching role. |
+| `collection` | ✅ | Must be exactly `teaching`. |
+| `type` | ✅ | Describes the kind of teaching, e.g. `"Undergraduate course"` or `"Workshop"`. |
+| `permalink` | ✅ | URL path for the individual teaching page, e.g. `/teaching/2014-spring-teaching-1`. |
+| `venue` | ✅ | Institution and department, e.g. `"University 1, Department"`. |
+| `date` | ✅ | Start date of the course in `YYYY-MM-DD` format. |
+| `location` | ✅ | City and country where the course was taught, e.g. `"City, Country"`. |
+
+## How teaching entries appear on your site
+
+- **`/teaching/` archive page** — All teaching entries are listed in reverse order. Each entry shows the title, type, venue, date, and location.
+- **Individual teaching pages** — Clicking a title opens the page at its `permalink`, where the full Markdown body is rendered. You can use headings, bullet points, links, and any other standard Markdown.
+- **CV page (`/cv/`)** — The CV automatically iterates over `site.teaching` and includes a compact entry for every file in `_teaching/`. No manual editing of your CV file is needed.
+
+## Complete example
+
+```yaml title="_teaching/2014-spring-teaching-1.md"
+---
+title: "Teaching experience 1"
+collection: teaching
+type: "Undergraduate course"
+permalink: /teaching/2014-spring-teaching-1
+venue: "University 1, Department"
+date: 2014-01-01
+location: "City, Country"
+---
+
+This is a description of a teaching experience. You can use markdown like
+any other post.
+
+Heading 1
+======
+
+Heading 2
+======
+
+Heading 3
+======
+```
+
+The `type` field accepts any descriptive string. The two values used in the sample files are:
+
+```
+type: "Undergraduate course"
+type: "Workshop"
+```
+
+Use whichever label best describes your role. The value is displayed next to the entry title in the archive listing.
+
+## Step-by-step: adding a teaching entry
+
+<Steps>
+  <Step title="Create the file">
+    Add a new Markdown file to `_teaching/` using the pattern `YYYY-season-course-name.md`.
+  </Step>
+  <Step title="Fill in the front matter">
+    Provide all required fields: `title`, `collection: teaching`, `type`, `permalink`, `venue`, `date`, and `location`.
+  </Step>
+  <Step title="Write the body">
+    Below the closing `---`, describe the course or teaching role in Markdown. You can include any number of headings, lists, and links. This content appears only on the individual teaching page.
+  </Step>
+  <Step title="Build and preview">
+    Run `jekyll serve` locally and navigate to `/teaching/` to confirm the entry appears. Also check `/cv/` to verify it shows up under the Teaching section.
+  </Step>
+</Steps>
+
+<Tip>
+The body text of a teaching file is displayed in full on the individual teaching page. Use headings and sections there to describe course objectives, topics covered, or links to syllabi — but keep the front matter fields concise because they are what appears in the compact archive listing.
+</Tip>

@@ -1,0 +1,276 @@
+---
+title: "Academic Pages Markdown Guide: Syntax, Tips & HTML Tags"
+sidebarTitle: "Markdown Guide"
+description: "Complete Markdown reference for Academic Pages covering Kramdown GFM, tables, notices, HTML tags, emoji, and file layout tips for Jekyll sites."
+---
+
+Academic Pages uses [Jekyll Kramdown](https://jekyllrb.com/docs/configuration/markdown/) with the GitHub Flavored Markdown (GFM) parser to render all `.md` files. While this is similar to the Markdown you write on GitHub, there are minor differences in edge cases — and Kramdown adds several powerful extras like definition lists, footnotes, and inline attribute syntax not available in standard GFM.
+
+## Key file locations
+
+Before editing content, it helps to know where everything lives in the repository:
+
+| Path | Purpose |
+|------|---------|
+| `_config.yml` | Basic site configuration |
+| `_data/navigation.yml` | Top navigation bar links |
+| `_pages/` | Standalone single pages |
+| `_publications/` | Academic publication entries |
+| `_portfolio/` | Portfolio project entries |
+| `_posts/` | Blog posts |
+| `_teaching/` | Teaching experience entries |
+| `_talks/` | Talk and presentation entries |
+| `_includes/footer.html` | Site footer HTML |
+| `/files/` | Static files such as PDFs |
+| `images/profile.png` | Sidebar profile image (path set in `_config.yml`) |
+
+## Tips and hints
+
+Collections of pages (publications, portfolio, posts, teaching, talks) are `.md` or `.html` files placed in their respective directories. The file extension controls how Jekyll processes them: name a file `.md` to render it as Markdown, name it `.html` to render it as raw HTML.
+
+<Tip>
+To check whether your latest push built successfully, go to the commit list on your GitHub repository. Each commit shows a status icon: a **green check** means a successful build, an **orange circle** means the build is in progress, a **red X** means an error occurred, and no icon means Jekyll has not attempted to build that commit yet.
+</Tip>
+
+### Emoji support via Jemoji
+
+Academic Pages includes the [Jemoji](https://github.com/jekyll/jemoji) plugin, which means you can use GitHub-style emoji shortcodes directly in your Markdown:
+
+```markdown
+:computer: :rocket: :mortar_board:
+```
+
+The [Emojis for Jekyll via Jemoji](https://www.fabriziomusacchio.com/blog/2021-08-16-emojis_for_Jekyll/#computer) blog post maintains the most comprehensive list of supported codes.
+
+### Client-side scripts
+
+GitHub Pages does not allow server-side code, but client-side scripts run fine. This means services like Google Analytics are fully supported. The [template wiki](https://github.com/academicpages/academicpages.github.io/wiki/Adding-Google-Analytics) has up-to-date instructions for enabling it.
+
+### CV formats
+
+Your CV can be written in Markdown (preview at `/cv/`) or generated from a JSON data file (preview at `/cv-json/`). The layouts differ slightly between the two. Update `_data/navigation.yml` to point the CV menu link at whichever version you use — the JSON version is hidden by default.
+
+---
+
+## Tables
+
+Kramdown supports two table styles. The first is a simple pipe table without a footer row:
+
+```markdown
+| Entry         | Item   |                                     |
+| ------------- | ------ | ----------------------------------- |
+| [John Doe](#) | 2016   | Description of the item in the list |
+| [Jane Doe](#) | 2019   | Description of the item in the list |
+| [Doe Doe](#)  | 2022   | Description of the item in the list |
+```
+
+The second style adds column alignment, a separator row (`|---|`), and an optional footer row separated by `|===|`:
+
+```markdown
+| Header1 | Header2 | Header3 |
+|:--------|:-------:|--------:|
+| cell1   | cell2   | cell3   |
+| cell4   | cell5   | cell6   |
+|-----------------------------|
+| cell1   | cell2   | cell3   |
+| cell4   | cell5   | cell6   |
+|=============================|
+| Foot1   | Foot2   | Foot3   |
+```
+
+Column alignment is set with colons in the separator row: `:-` for left, `:-:` for center, `-:` for right.
+
+---
+
+## Blockquotes
+
+A single-line blockquote uses the `>` prefix:
+
+```markdown
+> Quotes are cool.
+```
+
+---
+
+## Definition lists
+
+Kramdown supports definition lists natively — a feature not available in standard GitHub Markdown:
+
+```markdown
+Definition List Title
+:   Definition list division.
+
+Startup
+:   A startup company or startup is a company or temporary organization
+    designed to search for a repeatable and scalable business model.
+```
+
+---
+
+## Footnotes
+
+Footnotes can use either numeric or text identifiers, as long as the values are unique across the page:
+
+```markdown
+Footnotes can be useful for clarifying points.[^1] More text here.[^note]
+
+[^1]: This is the footnote itself.
+[^note]: When using text for footnote markers, no spaces are permitted in the name.
+```
+
+<Note>
+No spaces are allowed in text-based footnote names. `[^my note]` is invalid; use `[^my-note]` instead.
+</Note>
+
+---
+
+## Notices (callouts)
+
+Basic notices or call-outs are created by appending `{: .notice}` on the line immediately following a paragraph:
+
+```markdown
+**Watch out!** You can also add notices by appending `{: .notice}` to the
+line following the paragraph.
+{: .notice}
+```
+
+This Kramdown inline attribute syntax renders the paragraph as a styled notice block.
+
+---
+
+## Buttons
+
+Apply the `.btn` class to any link to make it render as a button:
+
+```markdown
+[Download PDF](/files/paper.pdf){: .btn}
+```
+
+---
+
+## HTML tags
+
+Because Kramdown processes HTML inline, you can use standard HTML tags anywhere in your Markdown files.
+
+<Accordion title="Address tag">
+Use the `<address>` element for contact or postal information:
+
+```html
+<address>
+  1 Infinite Loop<br />
+  Cupertino, CA 95014<br />
+  United States
+</address>
+```
+</Accordion>
+
+<Accordion title="Abbreviation tag">
+Kramdown has a special syntax for abbreviations that adds a tooltip on hover:
+
+```markdown
+The abbreviation CSS stands for "Cascading Style Sheets".
+
+*[CSS]: Cascading Style Sheets
+```
+</Accordion>
+
+<Accordion title="Cite tag">
+Use `<cite>` to attribute a quotation to its source:
+
+```html
+"Code is poetry." ---<cite>Automattic</cite>
+```
+</Accordion>
+
+<Accordion title="Details / Summary (collapsible sections)">
+The `<details>` tag works well alongside Markdown and produces a collapsible section:
+
+```html
+<details>
+  <summary>Collapsed by default</summary>
+  This section was collapsed by default!
+</details>
+```
+
+Add the `open` attribute to have the section expanded by default:
+
+```html
+<details open>
+  <summary>Open by default</summary>
+  This section is open by default thanks to the open attribute!
+</details>
+```
+</Accordion>
+
+<Accordion title="Keyboard tag">
+Use `<kbd>` to render text that looks like a keyboard key:
+
+```html
+Press <kbd>Ctrl</kbd> + <kbd>S</kbd> to save.
+```
+</Accordion>
+
+<Accordion title="Preformatted tag">
+The `<pre>` tag preserves whitespace and renders content in a monospace font without syntax highlighting:
+
+```html
+<pre>
+.post-title {
+  margin: 0 0 5px;
+  font-weight: bold;
+  font-size: 38px;
+}
+</pre>
+```
+</Accordion>
+
+<Accordion title="Insert and Strike tags">
+Use `<ins>` to indicate inserted text and `<strike>` to render strikethrough text:
+
+```html
+This tag should denote <ins>inserted</ins> text.
+This tag will let you <strike>strikeout text</strike>.
+```
+</Accordion>
+
+<Accordion title="Subscript and Superscript tags">
+Subscript and superscript work with standard HTML tags:
+
+```html
+H<sub>2</sub>O
+E = MC<sup>2</sup>
+```
+</Accordion>
+
+---
+
+## Code blocks with syntax highlighting
+
+Academic Pages uses Rouge for syntax highlighting. Specify the language after the opening fence:
+
+```python
+print('Hello World!')
+```
+
+```r
+print("Hello World!", quote = FALSE)
+```
+
+To enable syntax highlighting, add the language identifier immediately after the opening triple backtick (e.g., ` ```python `, ` ```r `, ` ```bash `, ` ```javascript `).
+
+---
+
+## Heading levels
+
+Kramdown supports headings from H1 through H6 using `#` prefixes:
+
+```markdown
+### Header three
+#### Header four
+##### Header five
+###### Header six
+```
+
+<Warning>
+Using an H1 heading (`# Title`) inside a page body is rarely needed — the page `title` field in front matter already renders as an H1. Start section headings at H2 (`##`) to maintain a correct document outline.
+</Warning>

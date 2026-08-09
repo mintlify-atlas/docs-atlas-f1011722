@@ -1,0 +1,156 @@
+---
+title: "Preview Academic Pages Locally Using Ruby and Jekyll"
+sidebarTitle: "Ruby & Jekyll"
+description: "Install Ruby, Bundler, and Node.js, then run the Jekyll live-reload dev server to preview your Academic Pages site at localhost:4000."
+---
+
+Running Academic Pages locally with Ruby and Jekyll gives you the fastest feedback loop — Jekyll watches your Markdown and HTML files and automatically rebuilds the site in your browser as you save changes. This guide walks through installing the required system packages, installing Ruby gem dependencies, and starting the development server.
+
+## Prerequisites
+
+You need **ruby-dev**, **ruby-bundler**, and **nodejs** installed on your machine before you can run the Jekyll dev server.
+
+<Tabs>
+  <Tab title="Linux / WSL">
+    On most Linux distributions and [Windows Subsystem for Linux (WSL)](https://learn.microsoft.com/en-us/windows/wsl/about), install the three packages with `apt`:
+
+    ```bash
+    sudo apt install ruby-dev ruby-bundler nodejs
+    ```
+
+    <Note>
+      If `apt` reports `Unable to locate package ruby-bundler` or `Unable to locate package nodejs`, refresh your package index first and then retry:
+
+      ```bash
+      sudo apt update && sudo apt upgrade -y
+      sudo apt install ruby-dev ruby-bundler nodejs
+      ```
+    </Note>
+
+    Some Linux environments also require a few additional build tools before native gem extensions can compile:
+
+    ```bash
+    sudo apt install build-essential gcc make
+    ```
+  </Tab>
+  <Tab title="macOS">
+    On macOS, use [Homebrew](https://brew.sh/) to install Ruby and Node, then install Bundler through RubyGems:
+
+    ```bash
+    brew install ruby
+    brew install node
+    gem install bundler
+    ```
+  </Tab>
+</Tabs>
+
+## Installing Ruby Gems
+
+<Steps>
+  <Step title="Run bundle install">
+    From the root of your cloned repository, install all gem dependencies declared in `Gemfile`:
+
+    ```bash
+    bundle install
+    ```
+
+    On success, Bundler writes a `Gemfile.lock` file that pins every gem to a specific version, ensuring reproducible builds.
+  </Step>
+
+  <Step title="Resolve file permission errors">
+    If `bundle install` fails with a permission error such as:
+
+    ```
+    ERROR:  While executing gem (Gem::FilePermissionError)
+    You don't have write permissions for the /var/lib/gems/3.2.0 directory.
+    ```
+
+    or
+
+    ```
+    Bundler::PermissionError: There was an error while trying to write to /usr/local/bin.
+    ```
+
+    configure Bundler to install gems into a local `vendor/bundle` directory inside your project instead of the system gem path:
+
+    ```bash
+    bundle config set --local path 'vendor/bundle'
+    ```
+
+    Then run `bundle install` again. On success you will see a `vendor/` folder and a `.bundle/` folder appear in the repository root.
+
+    <Tip>
+      The `vendor/bundle` approach is the recommended fix and keeps your system Ruby installation untouched. It is safe to commit `.bundle/config` to your repository.
+    </Tip>
+  </Step>
+
+  <Step title="Resolve Gemfile.lock conflicts">
+    If `bundle install` still fails after the permission fix, try deleting `Gemfile.lock` and running it again:
+
+    ```bash
+    rm Gemfile.lock
+    bundle install
+    ```
+
+    <Warning>
+      Deleting `Gemfile.lock` allows Bundler to resolve dependencies from scratch, which may update gem versions. Re-test your site after doing this to confirm nothing broke.
+    </Warning>
+  </Step>
+</Steps>
+
+## Running the Development Server
+
+<Steps>
+  <Step title="Start Jekyll">
+    Launch the local server with live-reload enabled and bound to `localhost`:
+
+    ```bash
+    jekyll serve -l -H localhost
+    ```
+
+    If your system has multiple Ruby environments and you want to ensure the exact gem versions from your `Gemfile.lock` are used, prefix the command with `bundle exec`:
+
+    ```bash
+    bundle exec jekyll serve -l -H localhost
+    ```
+  </Step>
+
+  <Step title="Open the site in your browser">
+    Once Jekyll finishes building, open your browser and navigate to:
+
+    ```
+    http://localhost:4000
+    ```
+
+    The terminal will display build output and log each page request as you browse the site.
+  </Step>
+</Steps>
+
+## How the Dev Server Works
+
+The `-l` flag enables **live-reload**: Jekyll monitors your project for file changes and automatically rebuilds affected pages, then triggers a browser refresh. The `-H localhost` flag binds the server to the `localhost` interface only.
+
+| Change type | Behaviour |
+|---|---|
+| `*.md` or `*.html` files | Rebuilt and browser refreshed automatically |
+| `_config.yml` | **Requires a full server restart** — stop with <kbd>Ctrl</kbd>+<kbd>C</kbd> and run the serve command again |
+
+<Note>
+  Changes to `_config.yml` are intentionally excluded from live-reload by Jekyll. This is noted at the top of the `_config.yml` file itself. Any changes to site-wide settings, the base URL, or the repository value will not appear until you restart the server.
+</Note>
+
+## VS Code DevContainer Option
+
+If you use [Visual Studio Code](https://code.visualstudio.com/), the repository ships with a Dev Container configuration that runs the full Jekyll environment inside a container without requiring any local Ruby installation.
+
+To open the project in the Dev Container:
+
+1. Open the repository folder in VS Code.
+2. Press <kbd>F1</kbd> to open the command palette.
+3. Type and select **DevContainers: Reopen in Container**.
+
+VS Code will rebuild the container if needed and reopen your workspace inside it. The Jekyll server starts automatically and is available at `http://localhost:4000`. All changes to your files are reflected live after a few seconds.
+
+<Tip>
+  The DevContainer approach is covered in more detail in the [Docker guide](/local-development/docker), which explains the underlying `docker-compose.yaml` and `devcontainer.json` configuration files used by this workflow.
+</Tip>

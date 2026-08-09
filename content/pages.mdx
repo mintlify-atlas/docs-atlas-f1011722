@@ -1,0 +1,209 @@
+---
+title: "Creating and Managing Standalone Pages in Academic Pages"
+sidebarTitle: "Pages"
+description: "Learn how to create, configure, and organize standalone pages in Academic Pages using front matter, layouts, and navigation settings."
+---
+
+Every page on an Academic Pages site lives in the `_pages/` directory as either a Markdown (`.md`) or HTML (`.html`) file. Jekyll discovers these files because `_pages` is listed in the `include` array of `_config.yml`, which tells Jekyll to process that non-standard directory alongside the rest of the site. Once a file exists in `_pages/` with the right front matter, it becomes a published page at whatever `permalink` you specify — completely independent of any navigation menu.
+
+## Front Matter
+
+Every page file must open with a YAML front matter block delimited by triple dashes (`---`). The fields below control how the page is rendered and where it lives.
+
+### Required fields
+
+| Field | Description |
+|---|---|
+| `permalink` | The URL path for the page (e.g. `/about/`). |
+| `title` | The page title shown in the browser tab and page header. |
+
+### Commonly used fields
+
+| Field | Type | Description |
+|---|---|---|
+| `layout` | string | The Jekyll layout to use. Defaults to `single` for `_pages` (set in `_config.yml`). |
+| `author_profile` | boolean | Whether to display the author sidebar. Defaults to `true` for pages. |
+| `redirect_from` | array | Old URLs that should redirect to this page (requires `jekyll-redirect-from` plugin). |
+
+<Note>
+The `_config.yml` defaults block sets `layout: single` and `author_profile: true` for all pages in `_pages/`, so you only need to include those fields in front matter when you want to **override** the default.
+</Note>
+
+### Front matter examples
+
+<Tabs>
+  <Tab title="about.md (home page)">
+    ```yaml
+    ---
+    permalink: /
+    title: "Academic Pages is a ready-to-fork GitHub Pages template for academic personal websites"
+    author_profile: true
+    redirect_from:
+      - /about/
+      - /about.html
+    ---
+    ```
+
+    Setting `permalink: /` makes this page the site's home page. The `redirect_from` list ensures visitors who bookmark `/about/` are forwarded here automatically.
+  </Tab>
+  <Tab title="non-menu-page.md">
+    ```yaml
+    ---
+    permalink: /non-menu-page/
+    title: "Page not in menu"
+    author_profile: true
+    redirect_from:
+      - "/nmp/"
+      - "/nmp.html"
+    ---
+    ```
+
+    This page is fully published and accessible by URL, but is not listed in `_data/navigation.yml`, so it does not appear in the site header.
+  </Tab>
+  <Tab title="terms.md">
+    ```yaml
+    ---
+    permalink: /terms/
+    title: "Terms and Privacy Policy"
+    modified: 2016-06-06
+    ---
+    ```
+
+    The `terms.md` page omits `layout` and `author_profile` entirely, relying on the site-wide defaults from `_config.yml`.
+  </Tab>
+</Tabs>
+
+## How Jekyll Includes `_pages`
+
+By default, Jekyll only processes files in the repository root and a handful of well-known directories. Because `_pages/` starts with an underscore, it would normally be ignored. The `include` key in `_config.yml` overrides this:
+
+```yaml
+# _config.yml
+include:
+  - .htaccess
+  - _pages
+  - files
+```
+
+Any file placed in `_pages/` is picked up by Jekyll on the next build and published to the URL given by its `permalink`.
+
+## Adding a Page to the Navigation
+
+The top navigation bar is controlled entirely by `_data/navigation.yml`. Listing a page there does not affect whether it is built — it only determines whether a link appears in the header. To add your page:
+
+<Steps>
+  <Step title="Open _data/navigation.yml">
+    Find the `main:` list, which contains all the header links in display order.
+
+    ```yaml
+    # _data/navigation.yml
+    main:
+      - title: "Publications"
+        url: /publications/
+
+      - title: "CV"
+        url: /cv/
+    ```
+  </Step>
+  <Step title="Add your page entry">
+    Append (or insert) a new entry with a `title` label and the `url` matching your page's `permalink`:
+
+    ```yaml
+    main:
+      - title: "Publications"
+        url: /publications/
+
+      - title: "My New Page"
+        url: /my-new-page/
+
+      - title: "CV"
+        url: /cv/
+    ```
+  </Step>
+  <Step title="Commit and push">
+    Save `navigation.yml` and push to GitHub. GitHub Pages will rebuild the site and the new link will appear in the header.
+  </Step>
+</Steps>
+
+<Tip>
+The order of entries in `navigation.yml` is the order links appear in the header. Reorder them freely to match your preferred layout.
+</Tip>
+
+## Non-Menu Pages
+
+A page that exists in `_pages/` but is **not** listed in `navigation.yml` is still fully built and accessible — it simply has no header link. The template includes `non-menu-page.md` as an explicit example of this pattern, demonstrating that you can publish content at a predictable URL (useful for supplementary material, hidden landing pages, or pages linked only from within your content) without cluttering the navigation bar.
+
+You can link to a non-menu page from anywhere in your site using its `permalink`:
+
+```markdown
+See the [supplementary data](/non-menu-page/) for additional details.
+```
+
+## Special Pages Already in the Template
+
+The template ships with a set of pre-built `_pages/` files. Most are wired into `navigation.yml` by default; a few serve infrastructure roles.
+
+| File | Permalink | Purpose |
+|---|---|---|
+| `about.md` | `/` | Home / about page |
+| `cv.md` | `/cv/` | Markdown-based CV |
+| `cv-json.md` | `/cv-json/` | JSON-based CV (commented out in navigation by default) |
+| `404.md` | `/404.html` | Custom 404 error page |
+| `sitemap.md` | `/sitemap/` | Human-readable sitemap listing all pages, posts, and collections |
+| `terms.md` | `/terms/` | Terms and privacy policy |
+| `year-archive.html` | `/year-archive/` | Blog posts grouped by year |
+| `category-archive.html` | `/categories/` | Blog posts grouped by category |
+| `tag-archive.html` | `/tags/` | Blog posts grouped by tag |
+| `collection-archive.html` | `/collection-archive/` | All collection items grouped by collection |
+| `talkmap.html` | `/talkmap.html` | Interactive map of talk locations |
+
+### The 404 page
+
+`404.md` is the only page that deliberately omits `author_profile` and most layout options. GitHub Pages serves it automatically whenever a visitor requests a URL that does not exist:
+
+```yaml
+---
+title: "Page Not Found"
+sitemap: false
+permalink: /404.html
+---
+```
+
+Setting `sitemap: false` prevents it from appearing in the auto-generated XML sitemap.
+
+### Archive pages
+
+The year, category, tag, and collection archive pages use the `archive` layout and contain Liquid loops that automatically pull in content from `site.posts` or `site.collections` — no manual updates needed when you add new posts.
+
+### The sitemap page
+
+`sitemap.md` uses the `archive` layout and contains Liquid that iterates over `site.pages`, `site.posts`, and every collection to produce a complete human-readable index of the site. A machine-readable `sitemap.xml` is generated separately by the `jekyll-sitemap` plugin.
+
+## Creating a New Page
+
+<Steps>
+  <Step title="Create the file in _pages/">
+    Add a new `.md` file. The filename does not affect the published URL — the `permalink` field does:
+
+    ```markdown
+    <!-- _pages/my-research.md -->
+    ---
+    permalink: /my-research/
+    title: "My Research"
+    author_profile: true
+    ---
+
+    Write your content here using standard Markdown.
+    ```
+  </Step>
+  <Step title="Add to navigation (optional)">
+    To show a link in the header, add an entry to `_data/navigation.yml` as described in the [navigation section](#adding-a-page-to-the-navigation) above.
+  </Step>
+  <Step title="Commit and push">
+    GitHub Pages rebuilds automatically on every push to the default branch.
+  </Step>
+</Steps>
+
+<Warning>
+Every `permalink` in `_pages/` must be unique. Two pages with the same `permalink` will cause one to silently overwrite the other during the Jekyll build.
+</Warning>

@@ -1,0 +1,115 @@
+---
+title: "Adding Talks and Presentations to Your Academic Site"
+sidebarTitle: "Talks"
+description: "Learn how to create talk entries in the _talks/ collection, set front matter fields, and enable the optional talkmap link on the talks page."
+---
+
+Talks and presentations are stored as individual Markdown files inside the `_talks/` directory. Each file describes a single talk or tutorial you have given. Jekyll collects all files in that directory and surfaces them across four places on your site: the `/talks/` archive page, each talk's own dedicated page, the Talks section of your CV, and optionally a visual talkmap generated from the location data.
+
+## File naming convention
+
+Name every talk file using the pattern `YYYY-MM-DD-short-title.md`, where the date is the date you gave the talk:
+
+```
+_talks/2012-03-01-talk-1.md
+_talks/2014-02-01-talk-2.md
+```
+
+The date in the filename determines the sort order. Talks are rendered in **reverse chronological order** (most recent first) on the `/talks/` page and on the CV.
+
+## Front matter fields
+
+| Field | Required | Description |
+|---|---|---|
+| `title` | ✅ | Title of the talk or presentation. |
+| `collection` | ✅ | Must be exactly `talks`. |
+| `type` | ✅ | The kind of presentation. Typical values are `"Talk"` or `"Tutorial"`. |
+| `permalink` | ✅ | URL path for the individual talk page, e.g. `/talks/2012-03-01-talk-1`. |
+| `venue` | ✅ | Name of the conference, institution, or event where you presented. |
+| `date` | ✅ | Date of the talk in `YYYY-MM-DD` format. |
+| `location` | ✅ | City and country where the talk took place, e.g. `"San Francisco, CA, USA"`. |
+
+<Note>
+The `location` field is used by the talkmap notebook to geocode your talks and plot them on a map. Providing accurate, consistent location strings — city plus country or state — improves geocoding accuracy.
+</Note>
+
+## Where talks appear on your site
+
+- **`/talks/` archive page** — All talks are listed in reverse chronological order, each showing the title, type, venue, date, and location.
+- **Individual talk pages** — Clicking a talk title opens the dedicated page at its `permalink`, where the full Markdown body is rendered.
+- **CV page (`/cv/`)** — The CV iterates over `site.talks` and includes a compact entry for every talk file. No manual editing of the CV is required.
+- **Talkmap (`/talkmap.html`)** — A Jupyter Notebook (`talkmap.ipynb`) mines the `location` fields from all talk files and generates an interactive map. The page is always present at `/talkmap.html`; the link to it from the talks page is controlled separately (see below).
+
+## Enabling the talkmap link
+
+The talks page (`/talks/`) can optionally display a link to `/talkmap.html`. This is controlled by the `talkmap_link` setting in `_config.yml`:
+
+```yaml title="_config.yml"
+talkmap_link: false   # change to true to add link to talkmap on talks page
+```
+
+Set `talkmap_link: true` to show the following link at the top of the `/talks/` page:
+
+> *See a map of all the places I've given a talk!*
+
+When the setting is `false` (the default), the link is hidden but the talkmap page itself is still accessible at `/talkmap.html`.
+
+## Complete example
+
+```yaml title="_talks/2012-03-01-talk-1.md"
+---
+title: "Talk 1 on Relevant Topic in Your Field"
+collection: talks
+type: "Talk"
+permalink: /talks/2012-03-01-talk-1
+venue: "UC San Francisco, Department of Testing"
+date: 2012-03-01
+location: "San Francisco, CA, USA"
+---
+
+This is a description of your talk, which is a markdown file that can be
+all markdown-ified like any other post. Yay markdown!
+```
+
+You can also include links within the body:
+
+```yaml title="_talks/2014-02-01-talk-2.md"
+---
+title: "Talk 2 on Relevant Topic in Your Field"
+collection: talks
+type: "Talk"
+permalink: /talks/2014-02-01-talk-2
+venue: "London School of Testing"
+date: 2014-02-01
+location: "London, UK"
+---
+
+[More information here](http://example2.com)
+
+This is a description of your talk, which is a markdown file that can be
+all markdown-ified like any other post. Yay markdown!
+```
+
+## Step-by-step: adding a new talk
+
+<Steps>
+  <Step title="Create the file">
+    Create a new file in `_talks/` using the naming pattern `YYYY-MM-DD-short-title.md`. Use the actual date you gave the talk.
+  </Step>
+  <Step title="Fill in the front matter">
+    Add all required fields: `title`, `collection: talks`, `type`, `permalink`, `venue`, `date`, and `location`.
+  </Step>
+  <Step title="Write the body">
+    Below the closing `---`, add a Markdown description of the talk. You can include links, images, and any standard Markdown formatting.
+  </Step>
+  <Step title="Optionally enable the talkmap link">
+    If you want the talks page to link to your talkmap, open `_config.yml` and set `talkmap_link: true`.
+  </Step>
+  <Step title="Build and preview">
+    Run `jekyll serve` locally and visit `/talks/` to confirm your new entry appears. Check `/cv/` to verify it also shows up in the Talks section.
+  </Step>
+</Steps>
+
+<Tip>
+The `type` field value (e.g. `"Talk"` or `"Tutorial"`) is displayed next to the talk title in archive listings. You can use any descriptive string here — just be consistent across your files so the labelling looks intentional.
+</Tip>

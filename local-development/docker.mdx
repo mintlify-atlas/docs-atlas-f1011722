@@ -1,0 +1,156 @@
+---
+title: "Run Academic Pages Locally with Docker and DevContainers"
+sidebarTitle: "Docker"
+description: "Use Docker Compose to build and serve your Academic Pages site in a container without installing Ruby or Jekyll on your host machine."
+---
+
+Docker lets you run the Academic Pages Jekyll environment in a self-contained container, so you never need to install Ruby, Bundler, or Node.js directly on your machine. The repository ships with a `Dockerfile`, a `docker-compose.yaml`, and a `_config_docker.yml` override file that together handle building the image, mounting your source files, and serving the site at `localhost:4000`.
+
+## Prerequisites
+
+You need [Docker](https://www.docker.com/) installed and running on your machine. Docker Desktop is the easiest option on macOS and Windows; on Linux you can install the Docker Engine package for your distribution.
+
+## Building and Running the Site
+
+<Steps>
+  <Step title="Set file permissions">
+    Before starting the container, make all files in the repository world-readable and world-writable. This prevents permission mismatches between your host user and the container's `vscode` user (UID/GID 1000):
+
+    ```bash
+    chmod -R 777 .
+    ```
+
+    <Warning>
+      `chmod -R 777 .` is intentionally broad so that the container user can read and write all project files through the bind mount. Avoid committing permission changes to Git — they are only needed for local Docker usage.
+    </Warning>
+  </Step>
+
+  <Step title="Start the container with Docker Compose">
+    Build the image (first run only) and start the Jekyll server:
+
+    ```bash
+    docker compose up
+    ```
+
+    Docker will:
+    1. Build the image from the `Dockerfile` using `ruby:3.2` as the base.
+    2. Install `build-essential` and `nodejs` inside the image.
+    3. Run `bundle install` to install all gems from `Gemfile`.
+    4. Mount your local repository into `/usr/src/app` inside the container.
+    5. Start Jekyll and begin serving the site.
+
+    Subsequent runs reuse the cached image unless the `Dockerfile` or `Gemfile` changes.
+  </Step>
+
+  <Step title="Open the site in your browser">
+    Once Jekyll reports that it is running, open:
+
+    ```
+    http://localhost:4000
+    ```
+
+    Port `4000` on the container is forwarded to port `4000` on your host by the `docker-compose.yaml`.
+  </Step>
+</Steps>
+
+## How docker-compose.yaml Is Configured
+
+The full `docker-compose.yaml` in the repository root is:
+
+```yaml
+services:
+  jekyll-site:
+    image: jekyll-site
+    build: .
+    volumes: [ .:/usr/src/app ]
+    ports: [ 4000:4000 ]
+    user: 1000:1000
+    environment: [ JEKYLL_ENV=docker ]
+    command: jekyll serve -H 0.0.0.0 -w --config _config.yml,_config_docker.yml
+```
+
+Key points:
+
+| Field | Value | Effect |
+|---|---|---|
+| `volumes` | `.:/usr/src/app` | Bind-mounts your local repository so file edits take effect inside the running container without a rebuild |
+| `ports` | `4000:4000` | Forwards `localhost:4000` on your machine to port `4000` inside the container |
+| `user` | `1000:1000` | Runs Jekyll as UID/GID 1000 (the `vscode` user created in the `Dockerfile`) |
+| `environment` | `JEKYLL_ENV=docker` | Sets the Jekyll environment variable to `docker` |
+| `command` | `jekyll serve -H 0.0.0.0 -w --config _config.yml,_config_docker.yml` | Serves on all interfaces with watch mode enabled, loading both config files |
+
+The `-w` flag enables **watch mode**, which makes Jekyll automatically rebuild pages when it detects changes to Markdown and HTML files in the mounted volume.
+
+<Note>
+  Jekyll binds to `0.0.0.0` inside the container (not `localhost`) so that Docker's port forwarding can reach it. This is different from the Ruby/Jekyll local setup, which binds to `localhost` directly.
+</Note>
+
+## The _config_docker.yml Override File
+
+When running via Docker Compose, Jekyll loads two configuration files in sequence:
+
+```
+_config.yml,_config_docker.yml
+```
+
+Values in `_config_docker.yml` override matching keys in `_config.yml`. The override file contains a single setting:
+
+```yaml
+url: ""
+```
+
+This clears the `url` field that is normally set to your GitHub Pages hostname in `_config.yml` (for example, `https://yourusername.github.io`). Clearing `url` ensures that internal links resolve correctly against `localhost:4000` when previewing locally, rather than pointing at your live GitHub Pages domain.
+
+<Tip>
+  You do not need to edit `_config_docker.yml` manually. It is intentionally minimal — its only job is to neutralise the `url` setting so local asset and page links work correctly inside the container.
+</Tip>
+
+## VS Code DevContainer Workflow
+
+The repository includes a `.devcontainer/devcontainer.json` that hooks into the same `docker-compose.yaml` to give you a fully integrated local development experience inside VS Code.
+
+```json
+{
+    "name": "ACADEMIC PAGES",
+    "dockerComposeFile": "../docker-compose.yaml",
+    "service": "jekyll-site",
+    "remoteEnv": {
+        "VSCODE_SERVER_DIR": "/home/vscode/.vscode-server"
+    },
+    "runArgs": [
+        "--user",
+        "1000:1000"
+    ],
+    "workspaceFolder": "/usr/src/app",
+    "remoteUser": "vscode",
+    "forwardPorts": [4000]
+}
+```
+
+The `devcontainer.json` reuses the `jekyll-site` service defined in `docker-compose.yaml`, sets the remote workspace to `/usr/src/app`, and forwards port `4000` to your host automatically.
+
+<Steps>
+  <Step title="Open the DevContainer in VS Code">
+    Open the cloned repository folder in [Visual Studio Code](https://code.visualstudio.com/).
+
+    VS Code typically detects the `.devcontainer` folder and prompts you to reopen in the container. If the prompt does not appear, open the command palette with <kbd>F1</kbd> and select **DevContainers: Reopen in Container**.
+  </Step>
+
+  <Step title="Wait for the container to build">
+    VS Code builds the Docker image (first run only), installs extensions inside the container, and connects your editor to the container environment. This may take a few minutes on the first run.
+  </Step>
+
+  <Step title="Access your site">
+    Once the container starts, Jekyll begins serving the site automatically. Open your browser and go to:
+
+    ```
+    http://localhost:4000
+    ```
+
+    All changes you make to Markdown and HTML files in the VS Code editor are reflected in the browser after a few seconds, thanks to Jekyll's watch mode (`-w`).
+  </Step>
+</Steps>
+
+<Note>
+  Changes to `_config.yml` require restarting the Jekyll process even in the DevContainer. To restart, open a terminal inside the container in VS Code and run `docker compose restart`, or stop and reopen the container via the command palette.
+</Note>

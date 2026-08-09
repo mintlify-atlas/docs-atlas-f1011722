@@ -1,0 +1,133 @@
+---
+title: "Writing and Publishing Blog Posts on Your Academic Site"
+sidebarTitle: "Blog Posts"
+description: "Learn how to write Jekyll blog posts in _posts/, set front matter fields, use tags and categories, configure comments, and control future post visibility."
+---
+
+Blog posts follow the standard Jekyll posts convention and live in the `_posts/` directory. Each post is a Markdown file with a date-prefixed filename and a YAML front matter block. Posts appear at their permalink URL, are listed on the blog archive pages, and are grouped automatically by tag and category — all without any manual index maintenance.
+
+## File naming convention
+
+Every post filename must follow the pattern `YYYY-MM-DD-title.md`, where the date matches the post's publication date and the title is a hyphen-separated slug:
+
+```
+_posts/2012-08-14-blog-post-1.md
+_posts/2015-08-14-blog-post-4.md
+```
+
+Jekyll requires this format to recognise a file as a post. The date in the filename also determines where the post appears in archive listings.
+
+## Front matter fields
+
+| Field | Required | Description |
+|---|---|---|
+| `title` | ✅ | Title of the post, displayed as the page heading. |
+| `date` | ✅ | Publication date in `YYYY-MM-DD` format. Should match the filename date. |
+| `permalink` | — | Explicit URL for the post, e.g. `/posts/2012/08/blog-post-1/`. If omitted, the URL is derived from `_config.yml`'s `permalink` setting. |
+| `tags` | — | A YAML list of tag strings. Each tag gets its own archive page at `/tags/<tag-name>/`. |
+| `category` | — | A single category string. Each category gets an archive page at `/categories/<category-name>/`. |
+| `excerpt` | — | A manually written summary shown in archive listings. If omitted, Jekyll uses the first paragraph of the post body. |
+
+## Tags and categories
+
+Tags and categories each generate their own archive pages automatically. Tags are listed under `/tags/` and categories under `/categories/`. You can assign multiple tags to a single post:
+
+```yaml
+tags:
+  - cool posts
+  - category1
+  - category2
+```
+
+Visitors can browse all posts sharing a tag or category by following the links on those archive pages.
+
+## Publishing future-dated posts
+
+By default Jekyll does not build posts whose `date` is in the future. The `_config.yml` option `future` overrides this behaviour:
+
+```yaml title="_config.yml"
+future: true
+```
+
+With `future: true`, posts dated ahead of today's date are included in every build. This is useful for pre-writing content you plan to publish later and keeping it in version control. The default in Academic Pages is `future: true`.
+
+<Warning>
+With `future: true`, a post that has a future date in its front matter **will** be publicly visible as soon as the site is built and deployed. If you are drafting content you do not want live yet, use the `_drafts/` directory instead, which is excluded from production builds.
+</Warning>
+
+## Comments
+
+Comments are configured globally in `_config.yml` under the `comments` key. By default, comments are enabled on posts (set in the `defaults` section of `_config.yml` via `comments: true`). The provider is set separately:
+
+```yaml title="_config.yml"
+comments:
+  provider: # false (default), "disqus", "discourse", "facebook", "staticman", "custom"
+  disqus:
+    shortname:
+  discourse:
+    server: # e.g.: meta.discourse.org
+  facebook:
+    appid:
+    num_posts: # 5 (default)
+    colorscheme: # "light" (default), "dark"
+```
+
+Set `provider` to the name of your comment platform and fill in the relevant sub-keys. Leaving `provider` blank (or setting it to `false`) disables comments site-wide.
+
+<Note>
+The `comments: true` default in `_config.yml`'s `defaults` section activates comment display on individual post pages. The `provider` setting controls which third-party service handles the actual comments. Both must be configured for comments to appear.
+</Note>
+
+## Complete example
+
+```yaml title="_posts/2012-08-14-blog-post-1.md"
+---
+title: 'Blog Post number 1'
+date: 2012-08-14
+permalink: /posts/2012/08/blog-post-1/
+tags:
+  - cool posts
+  - category1
+  - category2
+---
+
+This is a sample blog post. Lorem ipsum I can't remember the rest of lorem
+ipsum and don't have an internet connection right now. Testing testing testing
+this blog post. Blog posts are cool.
+
+Headings are cool
+======
+
+You can have many headings
+======
+
+Aren't headings cool?
+------
+```
+
+## Step-by-step: writing a new post
+
+<Steps>
+  <Step title="Create the file">
+    Add a new Markdown file to `_posts/` with the filename `YYYY-MM-DD-your-post-title.md`. Make sure the date matches when you want the post to be published.
+  </Step>
+  <Step title="Write the front matter">
+    Open the file and add a YAML front matter block with at minimum `title` and `date`. Add a `permalink` if you want a custom URL, and list any `tags` that apply to the post.
+  </Step>
+  <Step title="Write the body">
+    Below the closing `---`, write your post content in standard Markdown. Use `======` underlines for `<h1>` headings and `------` for `<h2>` headings, or use the `#` prefix syntax — both work with the Kramdown parser used by Academic Pages.
+  </Step>
+  <Step title="Check future-date visibility">
+    If the post date is in the future, confirm that `future: true` is set in `_config.yml` if you want it to appear during local development and in the deployed build.
+  </Step>
+  <Step title="Configure comments (once)">
+    If you have not already done so, set `comments.provider` in `_config.yml` to your preferred comment platform and fill in the platform-specific keys.
+  </Step>
+  <Step title="Build and preview">
+    Run `jekyll serve` locally and navigate to the post's permalink to confirm it renders correctly. Check the tag archive pages at `/tags/` to verify the tags appear.
+  </Step>
+</Steps>
+
+<Tip>
+The `excerpt` field lets you write a custom summary that appears in archive and listing pages. If you skip it, Jekyll automatically uses the text up to the first double newline (`\n\n`) in the post body as the excerpt — so writing a strong opening paragraph also gives you a good automatic excerpt.
+</Tip>

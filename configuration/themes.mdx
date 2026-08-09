@@ -1,0 +1,267 @@
+---
+title: "Choosing and Customizing Your Site Theme"
+sidebarTitle: "Themes"
+description: "Explore all six Academic Pages themes — default, air, sunrise, mint, dirt, and contrast — each with light and dark variants, and learn how to switch between them."
+---
+
+Academic Pages ships with six built-in visual themes, each available in both a light and a dark variant. The active theme is set by a single line in `_config.yml`. Theme stylesheets live in `_sass/theme/` and are imported automatically by `assets/css/main.scss` based on the value of `site_theme`. Preview images for all themes are stored in `images/themes/`.
+
+## Setting the Theme
+
+Open `_config.yml` and update the `site_theme` field near the top of the file:
+
+```yaml _config.yml
+site_theme : "default"   # Options: "default", "air", "sunrise", "mint", "dirt", "contrast"
+```
+
+<Steps>
+  <Step title="Choose a theme name">
+    Pick one of the six available theme names from the table below.
+  </Step>
+  <Step title="Edit _config.yml">
+    Replace the value of `site_theme` with your chosen theme name. The value is case-sensitive and must be lowercase.
+  </Step>
+  <Step title="Restart Jekyll">
+    Stop and restart your local server (`jekyll serve`). Because `_config.yml` is not hot-reloaded, changes only take effect after a full restart.
+  </Step>
+  <Step title="Preview both variants">
+    Each theme automatically generates both a light CSS rule set (`_sass/theme/[theme]_light.scss`) and a dark rule set (`_sass/theme/[theme]_dark.scss`). The dark variant activates when the visitor's OS or browser is set to dark mode.
+  </Step>
+</Steps>
+
+<Note>
+  The theme name in `site_theme` is appended with `_light` and `_dark` by `assets/css/main.scss` to import the correct SCSS partials. Setting `site_theme: "default"` loads `_default_light.scss` and `_default_dark.scss`; setting `site_theme: "air"` loads `_air_light.scss` and `_air_dark.scss`, and so on.
+</Note>
+
+---
+
+## Available Themes
+
+### Default
+
+The default theme uses a clean, neutral palette centered on blue-gray tones. It is the most conservative choice and closely resembles the upstream Minimal Mistakes theme from which Academic Pages was forked.
+
+<Tabs>
+  <Tab title="Light">
+    - **Background:** `#ffffff` (white)
+    - **Primary accent:** `#2f7f93` (muted teal-blue)
+    - **Text:** dark gray (`mix(#000, #7a8288, 40%)`)
+    - **Links:** `#52adc8` (sky blue), visited links lighten toward the accent color
+    - **Footer background:** `#f2f3f3` (near-white gray)
+    - **Code background:** `#fafafa`
+
+    Preview image: `images/themes/homepage-light.png`
+  </Tab>
+  <Tab title="Dark">
+    - **Background:** `#474747` (medium gray)
+    - **Primary accent:** `#0ea1c5` (bright cyan)
+    - **Text:** `#ffffff` (white)
+    - **Links:** `#0ea1c5` (cyan)
+
+    Preview image: `images/themes/homepage-dark.png`
+  </Tab>
+</Tabs>
+
+```yaml _config.yml
+site_theme : "default"
+```
+
+---
+
+### Air
+
+The Air theme has a light, airy feel with a sky-blue primary color and a light gray background. The dark variant shifts to deep charcoal with a teal accent, evoking a calm, modern aesthetic.
+
+<Tabs>
+  <Tab title="Light">
+    - **Background:** `#eeeeee` (light gray)
+    - **Primary accent:** `#0092ca` (sky blue)
+    - **Text:** `#222831` (near-black)
+    - **Links:** `#393e46` (dark slate), hovering darkens the link
+    - **Footer background:** matches the primary accent color (`#0092ca`)
+    - **Code background:** `#fafafa`
+
+    Preview image: `images/themes/homepage-air-light.png`
+  </Tab>
+  <Tab title="Dark">
+    - **Background:** `#252a34` (dark navy-charcoal)
+    - **Primary accent:** `#00adb5` (teal)
+    - **Text:** `#eaeaea` (off-white)
+    - **Links:** blend of primary color and text color
+    - **Footer background:** darkened version of the background
+
+    Preview image: `images/themes/homepage-air-dark.png`
+  </Tab>
+</Tabs>
+
+```yaml _config.yml
+site_theme : "air"
+```
+
+---
+
+### Sunrise
+
+The Sunrise theme draws on warm amber and coral tones. The light variant uses a warm parchment background; the dark variant evokes a deep night sky with warm ember highlights.
+
+<Tabs>
+  <Tab title="Light">
+    - **Background:** `#e8d5b7` (warm parchment/tan)
+    - **Primary accent:** `#fc3a52` (coral red)
+    - **Text:** `#000000` (black)
+    - **Links:** near the primary coral color, darkened slightly
+    - **Footer background:** `#f9b248` (amber/golden)
+
+    Preview image: `images/themes/homepage-sunrise-light.png`
+  </Tab>
+  <Tab title="Dark">
+    - **Background:** `#1a0f0a` (very dark brown-black)
+    - **Primary accent:** `#ff8793` (soft coral-pink)
+    - **Text:** `#e8d5b7` (warm off-white)
+    - **Links:** `#ff8793` (coral-pink)
+    - **Footer background:** `#2d1912` (deep dark brown)
+    - **Code background:** `#0d0806` (near-black)
+
+    Preview image: `images/themes/homepage-sunrise-dark.png`
+  </Tab>
+</Tabs>
+
+```yaml _config.yml
+site_theme : "sunrise"
+```
+
+---
+
+### Mint
+
+The Mint theme uses a fresh teal-green palette. The light variant is clean and cool; the dark variant is a deep forest green with luminous mint highlights.
+
+<Tabs>
+  <Tab title="Light">
+    - **Background:** `#f3f6f6` (very light blue-gray)
+    - **Primary accent:** `#11999e` (teal)
+    - **Text:** `#40514e` (dark teal-gray)
+    - **Links:** teal (`#11999e`)
+    - **Footer background:** `#30e3ca` (bright mint)
+
+    Preview image: `images/themes/homepage-mint-light.png`
+  </Tab>
+  <Tab title="Dark">
+    - **Background:** `#1a2421` (very dark forest green)
+    - **Primary accent:** `#30e3ca` (bright mint)
+    - **Text:** `#e8f5f3` (pale mint-white)
+    - **Links:** `#4effd9` (vivid aquamarine)
+    - **Footer background:** `#0f1614` (near-black green)
+
+    Preview image: `images/themes/homepage-mint-dark.png`
+  </Tab>
+</Tabs>
+
+```yaml _config.yml
+site_theme : "mint"
+```
+
+---
+
+### Dirt
+
+The Dirt theme uses earthy, organic browns and tans. The light variant is understated and warm; the dark variant creates a cozy, wood-fire atmosphere.
+
+<Tabs>
+  <Tab title="Light">
+    - **Background:** `#f3f3f3` (near-white warm gray)
+    - **Primary accent:** `#343434` (dark charcoal)
+    - **Text:** `#343434` (dark charcoal)
+    - **Links:** `#343434` (charcoal)
+    - **Footer background:** `#e9dcbe` (light tan/wheat)
+    - **Border color:** `#e9dcbe` (tan)
+
+    Preview image: `images/themes/homepage-dirt-light.png`
+  </Tab>
+  <Tab title="Dark">
+    - **Background:** `#231e18` (very dark brown)
+    - **Primary accent:** `#b49368` (warm tan/gold)
+    - **Text:** `#e4d4c8` (warm off-white)
+    - **Links:** `#d7c8bc` (light warm gray)
+    - **Footer background:** `#302b25` (dark brown)
+    - **Border color:** `#48413a` (medium brown)
+
+    Preview image: `images/themes/homepage-dirt-dark.png`
+  </Tab>
+</Tabs>
+
+```yaml _config.yml
+site_theme : "dirt"
+```
+
+---
+
+### Contrast
+
+The Contrast theme is designed for maximum legibility and accessibility. The light variant is stark black-on-white; the dark variant uses a pure black background with high-contrast colored links.
+
+<Tabs>
+  <Tab title="Light">
+    - **Background:** `#ffffff` (pure white)
+    - **Primary accent:** `#b60000` (deep red)
+    - **Text:** `#000000` (pure black)
+    - **Links:** `#0000ff` (pure blue), hover darkens to `#0000cc`
+    - **Footer background:** `#ffffff` (white)
+    - **Selection background:** `#b3d4fc`
+
+    Preview image: `images/themes/homepage-contrast-light.png`
+  </Tab>
+  <Tab title="Dark">
+    - **Background:** `#000000` (pure black)
+    - **Primary accent:** `#ff6c60` (bright coral-red)
+    - **Text:** `#ffffff` (pure white)
+    - **Links:** `#96cbfe` (light blue)
+    - **Footer background:** `#000000` (black)
+    - **Selection background:** `#264f78`
+
+    Preview image: `images/themes/homepage-contrast-dark.png`
+  </Tab>
+</Tabs>
+
+```yaml _config.yml
+site_theme : "contrast"
+```
+
+<Tip>
+  The Contrast theme is a good choice if your audience includes readers with visual impairments, as it meets WCAG AA contrast requirements for both its light and dark variants.
+</Tip>
+
+---
+
+## Theme Summary
+
+<CardGroup cols={2}>
+  <Card title="default" icon="palette">
+    Neutral blue-gray palette. Clean and professional. Closest to the upstream Minimal Mistakes theme.
+  </Card>
+  <Card title="air" icon="wind">
+    Sky blue and light gray in light mode; dark charcoal with teal in dark mode. Modern and calm.
+  </Card>
+  <Card title="sunrise" icon="sun">
+    Warm parchment and coral in light mode; deep brown-black with ember tones in dark mode.
+  </Card>
+  <Card title="mint" icon="leaf">
+    Fresh teal-green in both modes. Clean light variant; vivid dark forest-green variant.
+  </Card>
+  <Card title="dirt" icon="mountain">
+    Earthy browns and tans. Understated in light mode; cozy and warm in dark mode.
+  </Card>
+  <Card title="contrast" icon="circle-half-stroke">
+    Maximum legibility. Pure black/white in light mode; pure black with vivid color accents in dark mode.
+  </Card>
+</CardGroup>
+
+---
+
+## Light and Dark Mode Switching
+
+Academic Pages does not provide a manual light/dark toggle — the active variant is determined entirely by the visitor's operating system or browser preference via the CSS `prefers-color-scheme` media query. Both the `_light` and `_dark` SCSS files for your chosen theme are always compiled into `assets/css/main.css`; the browser selects the appropriate set of CSS custom properties at render time.
+
+<Warning>
+  Editing the SCSS files directly in `_sass/theme/` is possible, but those files may be overwritten if you update the template from upstream. Consider instead overriding specific CSS custom properties in `assets/css/main.scss` or a custom CSS file after the theme imports.
+</Warning>

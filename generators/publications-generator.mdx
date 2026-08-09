@@ -1,0 +1,155 @@
+---
+title: "Generating Publication Pages from a TSV or CSV File"
+sidebarTitle: "Publications"
+description: "Use publications.py or publications.ipynb to convert a spreadsheet of papers into individual Markdown files for your Academic Pages site."
+---
+
+The publications generator reads a tab-separated (`.tsv`) or comma-separated (`.csv`) file containing metadata for each of your papers and writes one `.md` file per publication into the `_publications/` directory. Each generated file contains the correct Jekyll front matter and a short body that Academic Pages uses to populate your Publications listing, individual publication pages, and CV.
+
+## Input file format
+
+The generator accepts both `.tsv` and `.csv` files. The file must have a header row as its first line. Two header layouts are recognised:
+
+**Legacy (8 columns):**
+
+```
+pub_date  title  venue  excerpt  citation  url_slug  paper_url  slides_url
+```
+
+**Updated (9 columns — adds `category`):**
+
+```
+pub_date  title  venue  excerpt  citation  url_slug  paper_url  slides_url  category
+```
+
+### Column reference
+
+| Column | Required | Notes |
+|--------|----------|-------|
+| `pub_date` | Yes | Publication date in `YYYY-MM-DD` format |
+| `title` | Yes | Full title of the paper |
+| `venue` | Yes | Journal or conference name |
+| `excerpt` | No | Short abstract or description; can be left blank |
+| `citation` | Yes | Full citation string for the paper |
+| `url_slug` | Yes | Slug used in the filename and permalink, e.g. `my-paper-2024` |
+| `paper_url` | No | Direct URL to the PDF or publisher page; can be left blank |
+| `slides_url` | No | URL to slides; can be left blank |
+| `category` | No | Publication category (e.g. `manuscripts`); defaults to `manuscripts` if omitted |
+
+<Note>
+`pub_date` must be formatted as `YYYY-MM-DD`. The generator uses this value to construct both the output filename (`YYYY-MM-DD-[url_slug].md`) and the `date` field in the front matter.
+</Note>
+
+### Example TSV row
+
+The template ships with `publications.tsv` containing three sample rows. Here is the first one (columns separated by tabs):
+
+```
+pub_date	title	venue	excerpt	citation	url_slug	paper_url	slides_url
+2009-10-01	Paper Title Number 1	Journal 1	This paper is about the number 1. The number 2 is left for future work.	Your Name, You. (2009). "Paper Title Number 1." <i>Journal 1</i>. 1(1).	paper-title-number-1	https://academicpages.github.io/files/paper1.pdf	https://academicpages.github.io/files/slides1.pdf
+```
+
+The equivalent CSV row (from `publications.csv`, which adds the `category` column) looks like:
+
+```
+2009-10-01,Paper Title Number 1,Journal 1,This paper is about the number 1. The number 2 is left for future work.,"Your Name, You. (2009). ""Paper Title Number 1."" <i>Journal 1</i>. 1(1).",paper-title-number-1,https://academicpages.github.io/files/paper1.pdf,http://academicpages.github.io/files/slides1.pdf,manuscripts
+```
+
+## Running the generator
+
+<Steps>
+
+### Navigate to the markdown_generator directory
+
+All commands are run from inside `markdown_generator/`, where the script and input files both live.
+
+```bash
+cd markdown_generator
+```
+
+### Run the script with your input file
+
+Pass the TSV or CSV filename as the only argument:
+
+<CodeGroup>
+
+```bash TSV input
+python3 publications.py publications.tsv
+```
+
+```bash CSV input
+python3 publications.py publications.csv
+```
+
+</CodeGroup>
+
+The script detects the delimiter automatically from the file extension.
+
+### Confirm the output files were created
+
+The generator writes files to `../_publications/` (one level up from `markdown_generator/`). Check that the expected files are present:
+
+```bash
+ls ../_publications/
+```
+
+You should see one `.md` file per data row, named `YYYY-MM-DD-[url_slug].md`.
+
+</Steps>
+
+<Warning>
+The script exits with an error if the header row does not match either the legacy or updated layout exactly. If you see `The header of the file does not match the expected format`, double-check that your column names and order are correct.
+</Warning>
+
+## Generated output
+
+For the example TSV row shown above, the generator produces `_publications/2009-10-01-paper-title-number-1.md` with the following content:
+
+```markdown
+---
+title: "Paper Title Number 1"
+collection: publications
+category: manuscripts
+permalink: /publication/2009-10-01-paper-title-number-1
+excerpt: 'This paper is about the number 1. The number 2 is left for future work.'
+date: 2009-10-01
+venue: 'Journal 1'
+paperurl: 'https://academicpages.github.io/files/paper1.pdf'
+citation: 'Your Name, You. (2009). &quot;Paper Title Number 1.&quot; <i>Journal 1</i>. 1(1).'
+---
+<a href='https://academicpages.github.io/files/paper1.pdf'>Download paper here</a>
+
+This paper is about the number 1. The number 2 is left for future work.
+
+Recommended citation: Your Name, You. (2009). "Paper Title Number 1." <i>Journal 1</i>. 1(1).
+```
+
+Key things to note about the generated front matter:
+
+- `collection: publications` is always set and tells Jekyll which collection this page belongs to.
+- `category` defaults to `manuscripts` when using the 8-column legacy header.
+- `permalink` is constructed as `/publication/YYYY-MM-DD-[url_slug]`.
+- Single and double quotes and ampersands in `excerpt`, `venue`, and `citation` are HTML-escaped (e.g. `"` becomes `&quot;`) to keep the YAML valid.
+- `paperurl` and `excerpt` front matter fields are only written when the corresponding column value is longer than 5 characters.
+
+## Jupyter notebook alternative
+
+`publications.ipynb` is a Jupyter notebook that runs the same generation logic with additional explanatory documentation inline. It is a good choice if you are working locally and want to inspect the intermediate data or follow the process interactively.
+
+```bash
+# From the markdown_generator/ directory
+jupyter notebook publications.ipynb
+```
+
+Run all cells in order. The notebook reads `publications.tsv` by default and writes to `../_publications/`.
+
+## BibTeX and ORCID workflows
+
+If your publication data lives in BibTeX files or an ORCID profile rather than a spreadsheet, two additional notebooks are available in `markdown_generator/`:
+
+- **`PubsFromBib.ipynb` / `pubsFromBib.py`** — Reads one or more `.bib` files and generates `_publications/*.md` from them. You configure a `publist` dictionary in the notebook with your BibTeX filenames, venue keys, and any per-file prefix text. Requires the `pybtex` package.
+- **`OrcidToBib.ipynb`** — Fetches all works associated with an ORCID iD using the `/works` API, retrieves full citation data via the `put-code` identifiers, and outputs BibTeX that can then be fed into `PubsFromBib.ipynb`.
+
+<Tip>
+A complete ORCID-to-site workflow chains the two notebooks: run `OrcidToBib.ipynb` to export your ORCID works as BibTeX, then run `PubsFromBib.ipynb` to convert that BibTeX into `_publications/*.md` files.
+</Tip>

@@ -1,0 +1,239 @@
+---
+title: "Generating Talk Pages and an Interactive Leaflet Talkmap"
+sidebarTitle: "Talks"
+description: "Use talks.py or talks.ipynb to convert a spreadsheet of talks into Markdown files, then generate an interactive Leaflet map with talkmap.py."
+---
+
+The talks generator converts a tab-separated or comma-separated spreadsheet of your presentations into individual `.md` files in the `_talks/` directory. Each file contains Jekyll front matter that Academic Pages uses to render your Talks listing, individual talk pages, and the talks section of your CV. After generating talk files you can optionally run a second tool — `talkmap.py` — to produce an interactive Leaflet cluster map of every location where you have presented.
+
+## Input file format
+
+The generator reads a `.tsv` or `.csv` file. The file must begin with a header row. The template ships with `markdown_generator/talks.tsv` as a starting point.
+
+### Column reference
+
+| Column | Required | Notes |
+|--------|----------|-------|
+| `title` | Yes | Title of the talk or tutorial |
+| `type` | No | Presentation type, e.g. `Talk`, `Tutorial`, `Conference proceedings talk`. Defaults to `Talk` if the value is 3 characters or fewer |
+| `url_slug` | Yes | Slug used in the filename and permalink, e.g. `talk-1` |
+| `venue` | No | Name of the venue, department, or conference |
+| `date` | Yes | Date in `YYYY-MM-DD` format |
+| `location` | No | Human-readable location string, e.g. `San Francisco, California`. Used by the talkmap geocoder |
+| `talk_url` | No | URL with more information about the talk; generates a "More information here" link in the page body |
+| `description` | No | Freeform description or abstract for the talk |
+
+<Note>
+`title`, `url_slug`, and `date` are the only required fields. Rows missing any of these three are skipped with a warning printed to stderr.
+</Note>
+
+### Example TSV content
+
+The template's `talks.tsv` contains four sample rows. Here is an excerpt showing two of them (columns separated by tabs):
+
+```
+title	type	url_slug	venue	date	location	talk_url	description
+Talk 1 on Relevant Topic in Your Field	Talk	talk-1	UC San Francisco, Department of Testing	2012-03-01	San Francisco, California		This is a description of your talk, which is a markdown files that can be all markdown-ified like any other post. Yay markdown!
+Tutorial 1 on Relevant Topic in Your Field	Tutorial	tutorial-1	UC-Berkeley Institute for Testing Science	2013-03-01	Berkeley CA, USA	http://exampleurl.com	This is a description of your tutorial, note the different field in type. This is a markdown files that can be all markdown-ified like any other post. Yay markdown!
+```
+
+## Running the generator
+
+<Steps>
+
+### Navigate to the markdown_generator directory
+
+```bash
+cd markdown_generator
+```
+
+### Run the script with your input file
+
+Pass the TSV or CSV filename as the first argument. An optional second argument sets the output directory (defaults to `../_talks/`):
+
+<CodeGroup>
+
+```bash TSV input
+python3 talks.py talks.tsv
+```
+
+```bash CSV input
+python3 talks.py talks.csv
+```
+
+```bash Custom output directory
+python3 talks.py talks.tsv /path/to/custom/_talks/
+```
+
+</CodeGroup>
+
+The script detects the delimiter automatically from the file extension (`.tsv`/`.txt` → tab, anything else → comma).
+
+### Confirm the output files
+
+The generator creates one file per row in `../_talks/`, named `YYYY-MM-DD-[url_slug].md`. Check the output:
+
+```bash
+ls ../_talks/
+```
+
+Each file is also confirmed with a `Created: <path>` message in the terminal.
+
+</Steps>
+
+## Generated output
+
+For the first sample row in `talks.tsv`, the generator produces `_talks/2012-03-01-talk-1.md`:
+
+```markdown
+---
+title: "Talk 1 on Relevant Topic in Your Field"
+collection: talks
+type: "Talk"
+permalink: /talks/2012-03-01-talk-1
+venue: "UC San Francisco, Department of Testing"
+date: 2012-03-01
+location: "San Francisco, California"
+---
+
+This is a description of your talk, which is a markdown files that can be all markdown-ified like any other post. Yay markdown!
+```
+
+For the second row, which includes a `talk_url`, the body also gains a link:
+
+```markdown
+---
+title: "Tutorial 1 on Relevant Topic in Your Field"
+collection: talks
+type: "Tutorial"
+permalink: /talks/2013-03-01-tutorial-1
+venue: "UC-Berkeley Institute for Testing Science"
+date: 2013-03-01
+location: "Berkeley CA, USA"
+---
+
+[More information here](http://exampleurl.com)
+
+This is a description of your tutorial, note the different field in type. This is a markdown files that can be all markdown-ified like any other post. Yay markdown!
+```
+
+Key points about the generated front matter:
+
+- `collection: talks` is always set.
+- `type` defaults to `"Talk"` when the column value is 3 characters or fewer.
+- `permalink` is constructed as `/talks/YYYY-MM-DD-[url_slug]`.
+- `venue` and `location` fields are only written when the column values are non-empty.
+- Ampersands, single quotes, and double quotes in `description` are HTML-escaped in the page body.
+
+## Jupyter notebook alternative
+
+`talks.ipynb` provides the same generation logic in an interactive Jupyter notebook with additional inline documentation.
+
+```bash
+# From the markdown_generator/ directory
+jupyter notebook talks.ipynb
+```
+
+Run all cells in sequence. The notebook reads `talks.tsv` by default and writes to `../_talks/`.
+
+## Generating the talkmap
+
+After your `_talks/` directory is populated, you can generate an interactive Leaflet cluster map of every location where you have given a talk. This step uses a separate script at the repository root.
+
+<Steps>
+
+### Install the required packages
+
+`talkmap.py` depends on `frontmatter`, `geopy`, and `getorg`, which are not part of the Python standard library.
+
+```bash
+pip install python-frontmatter geopy getorg
+```
+
+### Run talkmap.py from the repository root
+
+```bash
+# From the repository root (not from markdown_generator/)
+python3 talkmap.py
+```
+
+The script reads every `.md` file in `_talks/`, extracts the `location` front matter field, geocodes each location using the Nominatim service, and writes the results to `talkmap/map.html` and `talkmap/org-locations.js`.
+
+### Enable the map link in _config.yml
+
+By default the Talks page does not show a link to the map. Set `talkmap_link` to `true` to display it:
+
+```yaml
+# _config.yml
+talkmap_link: true   # change to true to add link to talkmap on talks page
+```
+
+With this option enabled, the Talks page renders: *"See a map of all the places I've given a talk!"* linking to `/talkmap.html`.
+
+### Commit the talkmap output
+
+Add the generated files to version control and push:
+
+```bash
+git add talkmap/
+git commit -m "Regenerate talkmap"
+git push
+```
+
+</Steps>
+
+<Warning>
+The talkmap geocodes locations by sending them to the Nominatim API. Each geocoding request is subject to a 5-second timeout. Talks with a missing `location` field are silently skipped. If geocoding fails (timeout or unrecognised place name), the error is printed to stdout but the script continues processing remaining talks.
+</Warning>
+
+## Automated talkmap with GitHub Actions
+
+The repository includes `.github/workflows/scrape_talks.yml`, which automatically regenerates the talkmap whenever files in `talks/`, `_talks/`, or `talkmap.ipynb` are pushed to the repository.
+
+```yaml
+name: Scrape Talk Locations
+
+on:
+  push:
+    paths:
+      - 'talks/**'
+      - '_talks/**'
+      - 'talkmap.ipynb'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        pip install jupyter pandas requests beautifulsoup4 geopy
+        pip install getorg --upgrade
+
+    - name: Run Jupyter Notebook
+      run: |
+        jupyter nbconvert --to notebook --execute talkmap.ipynb --output talkmap_out.ipynb
+
+    - name: Commit changes
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add .
+        git commit -m "Automated update of talk locations" || echo "No changes to commit"
+        git push
+```
+
+The workflow executes `talkmap.ipynb` (not `talkmap.py`) via `jupyter nbconvert` and commits the updated `talkmap/` output back to the repository. The `contents: write` permission is required for the commit step.
+
+<Tip>
+The workflow only runs when files matching the `paths` filter change. If you update talk files frequently, the talkmap will stay current automatically. If you prefer to regenerate it manually, you can delete or disable this workflow — the generated `talkmap/` files are static and remain valid until your talk locations change.
+</Tip>

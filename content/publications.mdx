@@ -1,0 +1,123 @@
+---
+title: "Adding and Managing Publications on Your Academic Site"
+sidebarTitle: "Publications"
+description: "Learn how to create publication entries in the _publications/ collection, configure front matter fields, and control how papers appear by category."
+---
+
+Publications are stored as individual Markdown files inside the `_publications/` directory. Each file represents one paper, book, or conference submission. When you add a file to that directory, Jekyll automatically picks it up and renders it on your `/publications/` page, on individual paper pages, and in the Publications section of your CV — no extra configuration required beyond filling in the front matter.
+
+## File naming convention
+
+Name every publication file using the pattern `YYYY-MM-DD-short-title.md`, where the date is the publication date and the short title is a hyphen-separated slug:
+
+```
+_publications/2009-10-01-paper-title-number-1.md
+_publications/2024-02-17-paper-title-number-4.md
+```
+
+The date in the filename controls the sort order. Publications are rendered in **reverse chronological order** (newest first) on the publications page.
+
+## Front matter fields
+
+Every publication file opens with a YAML front matter block. The table below documents each supported field.
+
+| Field | Required | Description |
+|---|---|---|
+| `title` | ✅ | Full title of the paper, book, or article. |
+| `collection` | ✅ | Must be exactly `publications`. |
+| `category` | ✅ | One of `manuscripts`, `conferences`, or `books` (see categories below). |
+| `permalink` | ✅ | URL path for the individual publication page, e.g. `/publication/2009-10-01-paper-title-number-1`. |
+| `date` | ✅ | Publication date in `YYYY-MM-DD` format. |
+| `venue` | ✅ | Name of the journal, conference, or publisher. |
+| `excerpt` | — | Short description shown in list views. |
+| `slidesurl` | — | URL to a slides PDF or presentation file. |
+| `paperurl` | — | URL to the full paper PDF. |
+| `bibtexurl` | — | URL to a `.bib` file for the citation. |
+| `citation` | — | Full formatted citation string. Supports HTML entities. |
+
+<Note>
+The `collection` field must always be set to `publications`. Omitting it will prevent Jekyll from including the file in the publications collection.
+</Note>
+
+## Publication categories
+
+The publications page groups entries under headings defined by the `publication_category` key in `_config.yml`. The default configuration ships with three categories:
+
+```yaml title="_config.yml"
+publication_category:
+  books:
+    title: 'Books'
+  manuscripts:
+    title: 'Journal Articles'
+  conferences:
+    title: 'Conference Papers'
+```
+
+The key in each entry (e.g. `manuscripts`) is what you set in the `category` field of a publication file. The `title` value becomes the `<h2>` heading displayed above that group on `/publications/`. Categories are rendered in the order they appear in `_config.yml`.
+
+<Tip>
+You can rename the heading for any category by changing its `title` value in `_config.yml` without touching any publication files. You can also add entirely new categories by appending a new key/title pair.
+</Tip>
+
+If `publication_category` is not defined in `_config.yml`, all publications are rendered in a single flat list without headings.
+
+## Using HTML entities in the citation field
+
+The `citation` field is rendered as HTML, so you can use HTML entities directly in the string. The most common use case is adding typographic quotes around the paper title:
+
+```yaml
+citation: 'Your Name, You. (2009). &quot;Paper Title Number 1.&quot; <i>Journal 1</i>. 1(1).'
+```
+
+Here `&quot;` produces a double-quote character and `<i>…</i>` italicises the journal name. The citation is automatically displayed below the paper body text when viewing an individual publication page.
+
+## How publications appear on the CV
+
+Your CV page (`/cv/`) automatically iterates over the entire `site.publications` collection and renders a compact entry for every publication. You do not need to manually list papers in the CV file — adding a file to `_publications/` is all it takes for the entry to appear under the Publications heading on your CV.
+
+## Complete example
+
+```yaml title="_publications/2009-10-01-paper-title-number-1.md"
+---
+title: "Paper Title Number 1"
+collection: publications
+category: manuscripts
+permalink: /publication/2009-10-01-paper-title-number-1
+excerpt: 'This paper is about the number 1. The number 2 is left for future work.'
+date: 2009-10-01
+venue: 'Journal 1'
+slidesurl: 'https://academicpages.github.io/files/slides1.pdf'
+paperurl: 'https://academicpages.github.io/files/paper1.pdf'
+bibtexurl: 'https://academicpages.github.io/files/bibtex1.bib'
+citation: 'Your Name, You. (2009). &quot;Paper Title Number 1.&quot; <i>Journal 1</i>. 1(1).'
+---
+The contents above will be part of a list of publications, if the user clicks the
+link for the publication than the contents of section will be rendered as a full
+page, allowing you to provide more information about the paper for the reader.
+When publications are displayed as a single page, the contents of the above
+"citation" field will automatically be included below this section in a smaller font.
+```
+
+## Step-by-step: adding a new publication
+
+<Steps>
+  <Step title="Create the file">
+    Create a new Markdown file in `_publications/` using the `YYYY-MM-DD-short-title.md` naming pattern.
+  </Step>
+  <Step title="Fill in the front matter">
+    Add the required fields — `title`, `collection: publications`, `category`, `permalink`, `date`, and `venue` — plus any optional fields you have.
+  </Step>
+  <Step title="Write the body">
+    Below the closing `---` of the front matter, add any extended description of the paper in Markdown. This content is only shown when a visitor opens the individual publication page.
+  </Step>
+  <Step title="Verify the category">
+    Confirm that the value you used for `category` matches a key defined under `publication_category` in `_config.yml`. If the key is missing, the paper will not appear under any category heading.
+  </Step>
+  <Step title="Build and preview">
+    Run `jekyll serve` locally and navigate to `/publications/` to confirm the entry appears under the correct category heading.
+  </Step>
+</Steps>
+
+<Warning>
+If you set a `date` in the future and the site does not show the publication, check that `future: true` is set in `_config.yml`. Without it, Jekyll excludes future-dated documents from the build.
+</Warning>

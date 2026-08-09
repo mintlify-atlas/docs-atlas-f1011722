@@ -1,0 +1,446 @@
+---
+title: "Configuring Your Academic Pages Site Settings"
+sidebarTitle: "Site Settings"
+description: "Learn how to configure every key option in _config.yml — from locale and URL to plugins, analytics, comments, SEO, collections, and page defaults."
+---
+
+The `_config.yml` file in the root of your repository is the master control file for your Academic Pages site. Almost every site-wide behavior — your title, URL, analytics provider, comment system, and the structure of your content collections — is driven by a single edit to this file. Jekyll reads it at build time, so you must restart the local server (`jekyll serve`) after making any changes.
+
+<Note>
+  `_config.yml` is **not** hot-reloaded during `jekyll serve -l`. Stop and restart the server after every edit to this file.
+</Note>
+
+## Basic Site Settings
+
+These fields appear at the very top of `_config.yml` and define the fundamental identity of your site.
+
+```yaml _config.yml
+locale                   : "en-US"
+site_theme               : "default"
+title                    : "Your Name / Site Title"
+title_separator          : "-"
+name                     : &name "Your Name"
+description              : &description "Your Name's academic portfolio"
+url                      : https://academicpages.github.io
+baseurl                  : ""
+repository               : "academicpages/academicpages.github.io"
+```
+
+<ParamField path="locale" type="string" default="en-US">
+  BCP 47 language tag used to select the correct UI text translations from `_data/ui-text.yml`. Common values: `"en-US"`, `"en-GB"`, `"fr"`, `"de"`, `"es"`.
+</ParamField>
+
+<ParamField path="site_theme" type="string" default="default">
+  Visual theme for the site. Available options: `"default"`, `"air"`, `"sunrise"`, `"mint"`, `"dirt"`, `"contrast"`. Each theme ships with both a light and dark variant. See the [Themes guide](/configuration/themes) for details.
+</ParamField>
+
+<ParamField path="title" type="string" required>
+  The site title shown in the browser tab, the masthead, and in social-sharing metadata. Typically set to your name or "Firstname Lastname".
+</ParamField>
+
+<ParamField path="title_separator" type="string" default="-">
+  Character placed between the page title and the site title in the `<title>` tag, for example `Page Title - Site Title`.
+</ParamField>
+
+<ParamField path="name" type="string" required>
+  Your name as a YAML anchor (`&name`). Referenced elsewhere as `*name` to avoid repetition.
+</ParamField>
+
+<ParamField path="description" type="string">
+  Default meta description for the site used when a page does not specify its own. Also declared as a YAML anchor (`&description`).
+</ParamField>
+
+<ParamField path="url" type="string" required>
+  The full base URL including protocol: `https://[your GitHub username].github.io`. If your site lives under a project path rather than a user/org page, include the path here or use `baseurl`.
+</ParamField>
+
+<ParamField path="baseurl" type="string" default='""'>
+  The subpath of your site relative to `url`. Leave blank for a user/org GitHub Pages site (`username.github.io`). Set to `"/repo-name"` when hosting from a project repository.
+</ParamField>
+
+<ParamField path="repository" type="string">
+  The GitHub repository in `owner/repo` format. Used by the `github-metadata` plugin and various GitHub-related template features.
+</ParamField>
+
+---
+
+## Site Settings (Miscellaneous)
+
+```yaml _config.yml
+teaser                   :  # filename in /images/ used as fallback social preview
+breadcrumbs              : false
+words_per_minute         : 160
+future                   : true
+read_more                : "disabled"
+talkmap_link             : false
+```
+
+<ParamField path="teaser" type="string">
+  Filename of a fallback image in `/images/` used as the Open Graph / social media preview when a page has no image of its own.
+</ParamField>
+
+<ParamField path="breadcrumbs" type="boolean" default="false">
+  Set to `true` to enable breadcrumb navigation above page content.
+</ParamField>
+
+<ParamField path="words_per_minute" type="integer" default="160">
+  Used to calculate the estimated reading time displayed on posts.
+</ParamField>
+
+<ParamField path="future" type="boolean" default="true">
+  When `true`, Jekyll will publish posts with a future date. Set to `false` to hide them until their date arrives.
+</ParamField>
+
+<ParamField path="read_more" type="string" default="disabled">
+  Set to `"enabled"` to add "Read more" links to post excerpts on archive pages.
+</ParamField>
+
+<ParamField path="talkmap_link" type="boolean" default="false">
+  Set to `true` to add a link to the generated talkmap on the Talks page.
+</ParamField>
+
+---
+
+## Analytics
+
+```yaml _config.yml
+analytics:
+  provider               : "false"  # "google", "google-universal", "google-analytics-4", "custom"
+  google:
+    tracking_id          :
+```
+
+<ParamField path="analytics.provider" type="string" default='"false"'>
+  Analytics backend to use. Supported values: `"false"` (disabled), `"google"`, `"google-universal"`, `"google-analytics-4"`, `"custom"`.
+</ParamField>
+
+<ParamField path="analytics.google.tracking_id" type="string">
+  Your Google Analytics property ID (e.g. `G-XXXXXXXXXX` for GA4, or `UA-XXXXXXXX-X` for Universal Analytics).
+</ParamField>
+
+---
+
+## Comments
+
+Academic Pages supports several comment providers. Only one should be active at a time.
+
+```yaml _config.yml
+comments:
+  provider               : # "disqus", "discourse", "facebook", "staticman", "custom"
+  disqus:
+    shortname            :
+  discourse:
+    server               : # e.g.: meta.discourse.org
+  facebook:
+    appid                :
+    num_posts            : # 5 (default)
+    colorscheme          : # "light" (default), "dark"
+staticman:
+  allowedFields          : ['name', 'email', 'url', 'message']
+  branch                 : "gh-pages"
+  commitMessage          : "New comment."
+  filename               : comment-{@timestamp}
+  format                 : "yml"
+  moderation             : true
+  path                   : "_data/comments/{options.slug}"
+  requiredFields         : ['name', 'email', 'message']
+  transforms:
+    email                : "md5"
+  generatedFields:
+    date:
+      type               : "date"
+      options:
+        format           : "iso8601"
+```
+
+<ParamField path="comments.provider" type="string" default="false">
+  Comment system to enable. Options: `"disqus"`, `"discourse"`, `"facebook"`, `"staticman"`, `"custom"`, or leave blank to disable comments.
+</ParamField>
+
+<ParamField path="comments.disqus.shortname" type="string">
+  Your Disqus site shortname. Required when `provider` is `"disqus"`.
+</ParamField>
+
+<ParamField path="comments.discourse.server" type="string">
+  Domain of your Discourse forum (e.g. `meta.discourse.org`). Required when `provider` is `"discourse"`.
+</ParamField>
+
+<ParamField path="comments.facebook.appid" type="string">
+  Facebook App ID for the Facebook Comments plugin.
+</ParamField>
+
+<ParamField path="comments.facebook.num_posts" type="integer" default="5">
+  Number of Facebook comments to display initially.
+</ParamField>
+
+<ParamField path="comments.facebook.colorscheme" type="string" default="light">
+  Facebook comments widget color scheme: `"light"` or `"dark"`.
+</ParamField>
+
+The `staticman` block configures the Staticman service for Git-based comment storage. Key options include `branch`, `moderation` (requires manual approval of each comment), and the `path` where comment YAML files are written.
+
+---
+
+## Atom Feed
+
+```yaml _config.yml
+atom_feed:
+  hide                   : false
+  path                   :
+```
+
+<ParamField path="atom_feed.hide" type="boolean" default="false">
+  Set to `true` to remove the RSS/Atom feed link from the site footer.
+</ParamField>
+
+<ParamField path="atom_feed.path" type="string">
+  Custom path for the feed file. Leave blank to use the default `feed.xml`.
+</ParamField>
+
+---
+
+## SEO Settings
+
+```yaml _config.yml
+google_site_verification :
+bing_site_verification   :
+alexa_site_verification  :
+yandex_site_verification :
+```
+
+Paste the verification token (not the full meta tag) provided by each search console. These fields are rendered into `<meta>` tags in the page `<head>` by the `jekyll-seo-tag` plugin.
+
+```yaml _config.yml
+twitter:
+  username               : &twitter
+facebook:
+  username               :
+  app_id                 :
+  publisher              :
+og_image                 :   # default Open Graph image filename
+og_description           :   # default Open Graph description
+social:
+  type                   :   # "Person" or "Organization"
+  name                   :
+  links:                     # array of social profile URLs
+```
+
+<ParamField path="og_image" type="string">
+  Default Open Graph image file (placed in `/images/`) used when sharing your site on social media.
+</ParamField>
+
+<ParamField path="social.type" type="string" default="Person">
+  Schema.org type for structured data. Use `"Person"` for an individual academic, `"Organization"` for a lab or group site.
+</ParamField>
+
+---
+
+## Reading Files
+
+```yaml _config.yml
+include:
+  - .htaccess
+  - _pages
+  - files
+exclude:
+  - "*.sublime-project"
+  - "*.sublime-workspace"
+  - .asset-cache
+  - .bundle
+  - .github
+  - .jekyll-assets-cache
+  - .sass-cache
+  - assets/js/_main.js
+  - assets/js/plugins
+  - assets/js/vendor
+  - CHANGELOG
+  - Capfile
+  - Dockerfile
+  - Gemfile
+  - Gruntfile.js
+  - LICENSE
+  - node_modules
+  - package.json*
+  - Rakefile
+  - README
+  - tmp
+  - vendor
+keep_files:
+  - .git
+  - .svn
+encoding: "utf-8"
+markdown_ext: "markdown,mkdown,mkdn,mkd,md"
+```
+
+`include` forces Jekyll to process directories it would normally ignore (such as `_pages`, which starts with an underscore). `exclude` prevents build artifacts, editor files, and server-only files from being copied into `_site`. Add any additional files or folders you want excluded from the built site to this list.
+
+---
+
+## Outputting
+
+```yaml _config.yml
+permalink: /:categories/:title/
+timezone: Etc/UTC
+```
+
+<ParamField path="permalink" type="string" default="/:categories/:title/">
+  URL pattern for posts. Jekyll supports several named patterns such as `/:year/:month/:day/:title/` in addition to custom patterns.
+</ParamField>
+
+<ParamField path="timezone" type="string" default="Etc/UTC">
+  IANA timezone name used when generating dates. See the [tz database](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for valid values.
+</ParamField>
+
+---
+
+## Plugins
+
+```yaml _config.yml
+plugins:
+  - jekyll-feed
+  - jekyll-gist
+  - jekyll-paginate
+  - jekyll-sitemap
+  - jekyll-redirect-from
+  - jemoji
+
+whitelist:
+  - jekyll-feed
+  - jekyll-gist
+  - jekyll-paginate
+  - jekyll-sitemap
+  - jekyll-redirect-from
+  - jemoji
+```
+
+All six plugins are whitelisted for GitHub Pages safe mode. Brief descriptions:
+
+<CardGroup cols={2}>
+  <Card title="jekyll-feed" icon="rss">
+    Generates `feed.xml` — the Atom feed linked in the site footer.
+  </Card>
+  <Card title="jekyll-gist" icon="code">
+    Renders GitHub Gists inline via the `{% gist %}` Liquid tag.
+  </Card>
+  <Card title="jekyll-paginate" icon="list">
+    Adds pagination support for post listing pages (`/page2/`, etc.).
+  </Card>
+  <Card title="jekyll-sitemap" icon="sitemap">
+    Automatically generates `sitemap.xml` for search engine crawlers.
+  </Card>
+  <Card title="jekyll-redirect-from" icon="arrow-right">
+    Enables the `redirect_from` front matter key so old URLs keep working.
+  </Card>
+  <Card title="jemoji" icon="face-smile">
+    Converts `:emoji_name:` syntax into emoji characters.
+  </Card>
+</CardGroup>
+
+---
+
+## Collections
+
+Collections define the custom content types beyond standard pages and posts.
+
+```yaml _config.yml
+collections:
+  teaching:
+    output: true
+    permalink: /:collection/:path/
+  publications:
+    output: true
+    permalink: /:collection/:path/
+  portfolio:
+    output: true
+    permalink: /:collection/:path/
+  talks:
+    output: true
+    permalink: /:collection/:path/
+```
+
+Each collection has `output: true`, meaning Jekyll generates an individual HTML page for every Markdown file in its corresponding `_teaching/`, `_publications/`, `_portfolio/`, or `_talks/` directory. The permalink pattern `/:collection/:path/` produces URLs like `/publications/2024-paper-title/`.
+
+---
+
+## Publication Categories
+
+```yaml _config.yml
+publication_category:
+  books:
+    title: 'Books'
+  manuscripts:
+    title: 'Journal Articles'
+  conferences:
+    title: 'Conference Papers'
+```
+
+These keys map the `category` field in individual publication front matter to display headings on the Publications page. You can rename the titles or add new categories to match your field's conventions.
+
+---
+
+## Defaults
+
+The `defaults` block sets front matter values automatically for every item in a collection or page type, so you don't have to repeat them in every file.
+
+```yaml _config.yml
+defaults:
+  # _posts
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: single
+      author_profile: true
+      read_time: true
+      comments: true
+      share: true
+      related: true
+  # _pages
+  - scope:
+      path: ""
+      type: pages
+    values:
+      layout: single
+      author_profile: true
+  # _teaching
+  - scope:
+      path: ""
+      type: teaching
+    values:
+      layout: single
+      author_profile: true
+      share: true
+      comments: true
+  # _publications
+  - scope:
+      path: ""
+      type: publications
+    values:
+      layout: single
+      author_profile: true
+      share: true
+      comments: true
+  # _portfolio
+  - scope:
+      path: ""
+      type: portfolio
+    values:
+      layout: single
+      author_profile: true
+      share: true
+      comment: true
+  # _talks
+  - scope:
+      path: ""
+      type: talks
+    values:
+      layout: talk
+      author_profile: true
+      share: true
+```
+
+<Tip>
+  You can override any default on a per-file basis by adding the same key to a file's own front matter. For example, add `author_profile: false` to a specific page's front matter to hide the sidebar on just that page.
+</Tip>
+
+The `layout: talk` used for the `talks` collection is distinct from `layout: single` — it renders a specialized talk template including venue and date information.

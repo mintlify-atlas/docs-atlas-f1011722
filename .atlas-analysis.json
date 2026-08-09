@@ -1,0 +1,114 @@
+{
+  "projectType": "general",
+  "projectName": "Academic Pages",
+  "projectDescription": "A ready-to-fork Jekyll-based GitHub Pages template for building personal academic portfolio websites featuring publications, talks, teaching, CV, and blog sections.",
+  "theme": "willow",
+  "primaryColor": "#3464cc",
+  "lightColor": null,
+  "darkColor": null,
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Getting Started",
+        "groups": [
+          {
+            "group": "Introduction",
+            "pages": [
+              "introduction",
+              "quickstart"
+            ]
+          },
+          {
+            "group": "Configuration",
+            "pages": [
+              "configuration/site-settings",
+              "configuration/author-profile",
+              "configuration/navigation",
+              "configuration/themes"
+            ]
+          },
+          {
+            "group": "Local Development",
+            "pages": [
+              "local-development/ruby-jekyll",
+              "local-development/docker"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Content Guide",
+        "groups": [
+          {
+            "group": "Collections",
+            "pages": [
+              "content/publications",
+              "content/talks",
+              "content/teaching",
+              "content/portfolio",
+              "content/blog-posts"
+            ]
+          },
+          {
+            "group": "Pages & CV",
+            "pages": [
+              "content/pages",
+              "content/cv-markdown",
+              "content/cv-json"
+            ]
+          },
+          {
+            "group": "Markdown & Formatting",
+            "pages": [
+              "content/markdown-guide",
+              "content/math-diagrams",
+              "content/front-matter"
+            ]
+          },
+          {
+            "group": "Markdown Generators",
+            "pages": [
+              "generators/overview",
+              "generators/publications-generator",
+              "generators/talks-generator"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Ready-to-fork Jekyll template hosted on GitHub Pages for free",
+    "Dedicated collections for publications, talks, teaching, and portfolio items",
+    "Dual CV formats: Markdown-based and JSON-based (JSONResume schema)",
+    "Author profile sidebar with links to Google Scholar, ORCID, GitHub, and more",
+    "Multiple built-in visual themes (default, air, sunrise, mint, dirt, contrast) with light/dark variants",
+    "MathJax support for LaTeX equations",
+    "Mermaid support for diagrams",
+    "Plotly support for interactive charts",
+    "Markdown generator scripts/notebooks to bulk-create content from CSV/TSV files",
+    "Interactive talk map generated via Python/Jupyter using Leaflet.js",
+    "Comment system integrations (Disqus, Discourse, Facebook, Staticman)",
+    "Analytics integrations (Google Analytics 4, Universal Analytics, custom)",
+    "Docker and VS Code DevContainer support for local development"
+  ],
+  "publicApiSurface": [
+    "_config.yml — site-wide configuration (title, url, author, theme, analytics, comments, collections)",
+    "_data/navigation.yml — top navigation bar links",
+    "_data/authors.yml — additional author profiles",
+    "_data/ui-text.yml — UI string overrides",
+    "_data/cv.json — JSONResume-format CV data",
+    "_publications/*.md — publication entries (YAML front matter: title, collection, category, permalink, date, venue, paperurl, bibtexurl, citation)",
+    "_talks/*.md — talk entries (YAML front matter: title, collection, type, permalink, venue, date, location)",
+    "_teaching/*.md — teaching entries (YAML front matter: title, collection, type, permalink, venue, date, location)",
+    "_portfolio/*.md — portfolio entries (YAML front matter: title, excerpt, header, url_btn)",
+    "_posts/*.md — blog post entries (standard Jekyll post front matter)",
+    "_pages/*.md — standalone pages (YAML front matter: permalink, title, layout, author_profile)",
+    "markdown_generator/publications.py — generates _publications/*.md from CSV",
+    "markdown_generator/talks.py — generates _talks/*.md from TSV",
+    "scripts/cv_markdown_to_json.py — converts Markdown CV to cv.json",
+    "talkmap.py / talkmap.ipynb — generates interactive Leaflet talk map",
+    "site_theme in _config.yml — selects visual theme (default, air, sunrise, mint, dirt, contrast)",
+    "publication_category in _config.yml — defines publication category headings (books, manuscripts, conferences)"
+  ]
+}

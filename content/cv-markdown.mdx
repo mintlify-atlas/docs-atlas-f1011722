@@ -1,0 +1,222 @@
+---
+title: "Building Your CV Page with Markdown in Academic Pages"
+sidebarTitle: "CV Markdown"
+description: "Understand how the Markdown CV page works, which sections you write manually, and how publications, talks, and teaching auto-populate via Liquid."
+---
+
+The Markdown CV page (`_pages/cv.md`) combines hand-written content with dynamically generated sections. You write the sections you maintain yourself — Education, Work experience, Skills, and Service and leadership — directly in the file as ordinary Markdown. The Publications, Talks, and Teaching sections are assembled automatically at build time from the site's collections using Liquid template loops, so they always stay in sync with the `.md` files you maintain in `_publications/`, `_talks/`, and `_teaching/`.
+
+## Front Matter
+
+```yaml
+# _pages/cv.md
+---
+layout: archive
+title: "CV"
+permalink: /cv/
+author_profile: true
+redirect_from:
+  - /resume
+---
+```
+
+The `layout: archive` value is important — it loads the archive styles that format the list items rendered by the Liquid loops. The `redirect_from` entry means visitors who navigate to `/resume` are forwarded to `/cv/` automatically.
+
+## Manual Sections
+
+These four sections are written directly in `cv.md` as standard Markdown and are entirely under your control:
+
+### Education
+
+Use a bulleted list with each degree on its own line:
+
+```markdown
+Education
+======
+* Ph.D in Version Control Theory, GitHub University, 2018 (expected)
+* M.S. in Jekyll, GitHub University, 2014
+* B.S. in GitHub, GitHub University, 2012
+```
+
+### Work experience
+
+Use a nested bulleted list. The template uses `*` for the top-level entry and indented `*` items for details:
+
+```markdown
+Work experience
+======
+* Spring 2024: Academic Pages Collaborator
+  * GitHub University
+  * Duties includes: Updates and improvements to template
+  * Supervisor: The Users
+
+* Fall 2015: Research Assistant
+  * GitHub University
+  * Duties included: Merging pull requests
+  * Supervisor: Professor Hub
+```
+
+### Skills
+
+A simple bulleted list with optional sub-bullets:
+
+```markdown
+Skills
+======
+* Skill 1
+* Skill 2
+  * Sub-skill 2.1
+  * Sub-skill 2.2
+  * Sub-skill 2.3
+* Skill 3
+```
+
+### Service and leadership
+
+Free-form Markdown. Use bullets, prose, or any combination:
+
+```markdown
+Service and leadership
+======
+* Currently signed in to 43 different slack teams
+```
+
+## Auto-Generated Sections
+
+The Publications, Talks, and Teaching sections are populated entirely by Liquid `for` loops that iterate over the site's collections in reverse chronological order. The loops are written in `cv.md` itself:
+
+```html
+Publications
+======
+  <ul>{% for post in site.publications reversed %}
+    {% include archive-single-cv.html %}
+  {% endfor %}</ul>
+
+Talks
+======
+  <ul>{% for post in site.talks reversed %}
+    {% include archive-single-talk-cv.html  %}
+  {% endfor %}</ul>
+
+Teaching
+======
+  <ul>{% for post in site.teaching reversed %}
+    {% include archive-single-cv.html %}
+  {% endfor %}</ul>
+```
+
+When Jekyll builds the site, each `{% for %}` loop walks the corresponding collection and calls an include partial for every item it finds.
+
+<Note>
+You never need to edit the Publications, Talks, or Teaching sections in `cv.md`. Adding or editing a file in `_publications/`, `_talks/`, or `_teaching/` is all that is required — the CV page updates automatically on the next build.
+</Note>
+
+### The `archive-single-cv.html` include
+
+`_includes/archive-single-cv.html` is used for both Publications and Teaching entries. It renders:
+
+- The item title as a linked heading (using `post.url`)
+- A citation string derived from `post.citation` if the `post.venue` front matter field is set
+
+### The `archive-single-talk-cv.html` include
+
+`_includes/archive-single-talk-cv.html` is used specifically for Talks. It renders:
+
+- The talk title as a linked heading
+- The date (`post.date`) formatted as a full date string
+- A description combining `post.type`, `post.venue`, and `post.location` when `post.venue` is set
+
+## How the `archive` Layout Works with CV
+
+The `archive` layout provides the page chrome (header, sidebar, footer) while the body of `cv.md` is inserted as `{{ content }}`. Because the Liquid loops are inside the Markdown file itself rather than in a separate layout, you have full control over section order — simply rearrange the blocks in `cv.md` to change what appears first.
+
+<Tip>
+To add an entirely new section, write it as plain Markdown between the existing sections. To add a dynamically-generated section from a custom collection, define the collection in `_config.yml` and add a corresponding `{% for post in site.<collection_name> reversed %}` loop in `cv.md`.
+</Tip>
+
+## Enabling the CV in Navigation
+
+The template enables the Markdown CV in `_data/navigation.yml` by default:
+
+```yaml
+# _data/navigation.yml
+main:
+  # ...
+  - title: "CV"
+    url: /cv/
+
+  # - title: "CV"
+  #   url: /cv-json/
+```
+
+The JSON CV option is present but commented out. Only one CV entry should be active at a time. To switch to the JSON-based CV, comment out the `/cv/` entry and uncomment the `/cv-json/` entry.
+
+## Complete `cv.md` Reference
+
+For reference, here is the full structure of the default `cv.md` showing the interleaving of hand-written sections and Liquid loops:
+
+```markdown
+---
+layout: archive
+title: "CV"
+permalink: /cv/
+author_profile: true
+redirect_from:
+  - /resume
+---
+
+{% include base_path %}
+
+Education
+======
+* Ph.D in Version Control Theory, GitHub University, 2018 (expected)
+* M.S. in Jekyll, GitHub University, 2014
+* B.S. in GitHub, GitHub University, 2012
+
+Work experience
+======
+* Spring 2024: Academic Pages Collaborator
+  * GitHub University
+  * Duties includes: Updates and improvements to template
+  * Supervisor: The Users
+
+* Fall 2015: Research Assistant
+  * GitHub University
+  * Duties included: Merging pull requests
+  * Supervisor: Professor Hub
+
+Skills
+======
+* Skill 1
+* Skill 2
+  * Sub-skill 2.1
+  * Sub-skill 2.2
+  * Sub-skill 2.3
+* Skill 3
+
+Publications
+======
+  <ul>{% for post in site.publications reversed %}
+    {% include archive-single-cv.html %}
+  {% endfor %}</ul>
+
+Talks
+======
+  <ul>{% for post in site.talks reversed %}
+    {% include archive-single-talk-cv.html  %}
+  {% endfor %}</ul>
+
+Teaching
+======
+  <ul>{% for post in site.teaching reversed %}
+    {% include archive-single-cv.html %}
+  {% endfor %}</ul>
+
+Service and leadership
+======
+* Currently signed in to 43 different slack teams
+```
+
+<Warning>
+The `{% include base_path %}` line near the top of `cv.md` must be kept. It sets a Liquid variable that the `archive-single-cv.html` and `archive-single-talk-cv.html` partials depend on to build correct absolute URLs.
+</Warning>

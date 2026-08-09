@@ -1,20 +1,68 @@
 ---
-title: "Introduction"
-description: "Welcome to your project"
+title: "Academic Pages: Jekyll Template for Academic Websites"
+sidebarTitle: "Home"
+description: "Academic Pages is a free, ready-to-fork GitHub Pages template for personal academic websites. Showcase publications, talks, teaching, and your CV."
 ---
 
-Write a short description of your product here. What it does, who it's for, and what they can accomplish with it.
+Academic Pages is a Jekyll-based GitHub Pages template for researchers, academics, and anyone who wants a professional portfolio website — for free, with no ads, and no server to maintain. Fork the repository, edit a few Markdown and YAML files, and your site is live.
 
-<Tip>
-  Ready to make this your own? Start by editing this page. Update your `docs.json` file to customize your site. Then fill out the [Quickstart](/quickstart) page.
-</Tip>
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Fork the template and publish your site in under 10 minutes.
+  </Card>
+  <Card title="Configuration" icon="sliders" href="/configuration/site-settings">
+    Customize your site title, author details, and analytics in `_config.yml`.
+  </Card>
+  <Card title="Content Guide" icon="file-lines" href="/content/publications">
+    Add publications, talks, teaching entries, and blog posts using Markdown.
+  </Card>
+  <Card title="Local Development" icon="laptop-code" href="/local-development/ruby-jekyll">
+    Preview changes locally with Jekyll or Docker before pushing to GitHub.
+  </Card>
+</CardGroup>
 
-<Card title="Quickstart" icon="rocket" href="/quickstart">
-  This card links to the quickstart page in your project.
-</Card>
-<Card title="Components" icon="puzzle-piece" href="https://mintlify.com/docs/components">
-  Add cards, callouts, steps, tabs, and more to design and structure your pages.
-</Card>
-<Card title="Settings" icon="gear" href="https://mintlify.com/docs/organize/settings">
-  Set your site name, branding, and navigation in the `docs.json` file.
-</Card>
+## What's inside
+
+Academic Pages provides dedicated content collections and tooling for the content academics actually need.
+
+<CardGroup cols={3}>
+  <Card title="Publications" icon="book-open" href="/content/publications">
+    Journal articles, conference papers, and books with BibTeX links.
+  </Card>
+  <Card title="Talks" icon="microphone" href="/content/talks">
+    Conference talks and tutorials with venue, date, and location.
+  </Card>
+  <Card title="Teaching" icon="chalkboard-teacher" href="/content/teaching">
+    Courses taught with descriptions and institution details.
+  </Card>
+  <Card title="Portfolio" icon="briefcase" href="/content/portfolio">
+    Projects and work samples with images and links.
+  </Card>
+  <Card title="CV" icon="id-card" href="/content/cv-markdown">
+    Auto-generated CV page pulling data from your collections.
+  </Card>
+  <Card title="Blog" icon="pen-nib" href="/content/blog-posts">
+    Standard Jekyll blog posts with tags, categories, and comments.
+  </Card>
+</CardGroup>
+
+## How it works
+
+<Steps>
+  <Step title="Fork the repository">
+    Click **Use this template** on GitHub and name your new repository `[your-username].github.io`. GitHub Pages will automatically build and host your site.
+  </Step>
+  <Step title="Configure your site">
+    Edit `_config.yml` to set your name, bio, institution, and social profile links. Your author sidebar populates from these values.
+  </Step>
+  <Step title="Add your content">
+    Create Markdown files in `_publications/`, `_talks/`, `_teaching/`, and `_posts/`. Each file has a short YAML front matter block — the theme handles the rest.
+  </Step>
+  <Step title="Push and go live">
+    Commit and push. GitHub Actions builds the site automatically. Your site is live at `https://[your-username].github.io`.
+  </Step>
+</Steps>
+
+<Note>
+  Academic Pages is free and open source under the MIT License. It is built on top of the [Minimal Mistakes Jekyll Theme](https://mmistakes.github.io/minimal-mistakes/) and extended for academic use cases.
+</Note>

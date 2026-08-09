@@ -1,0 +1,381 @@
+---
+title: "YAML Front Matter Reference for Academic Pages Content Types"
+sidebarTitle: "Front Matter"
+description: "Full YAML front matter reference for Academic Pages: posts, publications, talks, teaching, portfolio, and pages, with _config.yml defaults explained."
+---
+
+Every content file in Academic Pages begins with a YAML front matter block — a section delimited by triple dashes (`---`) at the very top of the file. Jekyll reads this block before rendering the page and uses the values to control layout, URL, metadata, and which features are enabled. Fields you omit are either ignored or inherited from the `defaults:` section of `_config.yml`, which means most files only need a handful of explicit fields.
+
+---
+
+## What front matter looks like
+
+```yaml
+---
+title: "My Page Title"
+layout: single
+permalink: /my-page/
+author_profile: true
+---
+```
+
+Everything between the two `---` lines is parsed as YAML. The rest of the file is the page body, processed as Markdown (for `.md` files) or HTML (for `.html` files).
+
+---
+
+## Common fields shared by all content types
+
+These fields are meaningful on any page or collection item:
+
+<Accordion title="title">
+**Type:** string — The page heading displayed at the top of the page and in browser tabs. Also used in list views and social sharing previews.
+
+```yaml
+title: "Paper Title Number 1"
+```
+</Accordion>
+
+<Accordion title="layout">
+**Type:** string — Selects the HTML layout template. Most content uses `single`. Talks use `talk`. The `defaults:` block in `_config.yml` sets this automatically per collection, so you rarely need to set it manually.
+
+```yaml
+layout: single
+```
+</Accordion>
+
+<Accordion title="permalink">
+**Type:** string — The URL path for this page, relative to the site root. Always include a trailing slash.
+
+```yaml
+permalink: /publication/2009-10-01-paper-title-number-1
+```
+</Accordion>
+
+<Accordion title="author_profile">
+**Type:** boolean — When `true`, the sidebar with your photo and bio is shown on this page. Set to `false` to display a full-width content area.
+
+```yaml
+author_profile: true
+```
+</Accordion>
+
+<Accordion title="excerpt">
+**Type:** string — A short summary shown in list views and used as the meta description for social sharing. Supports basic HTML for inline formatting.
+
+```yaml
+excerpt: 'This paper is about the number 1. The number 2 is left for future work.'
+```
+</Accordion>
+
+---
+
+## Posts (`_posts/`)
+
+Blog post files are named `YYYY-MM-DD-slug.md`. In addition to the common fields, posts support:
+
+```yaml
+---
+title: 'Blog Post number 1'
+date: 2012-08-14
+permalink: /posts/2012/08/blog-post-1/
+tags:
+  - cool posts
+  - category1
+  - category2
+read_time: true
+comments: true
+share: true
+related: true
+---
+```
+
+| Field | Type | Purpose |
+|-------|------|---------|
+| `date` | date | Publication date in `YYYY-MM-DD` format. Controls sort order in archives. |
+| `tags` | list | Tag labels; generates tag archive pages at `/tags/`. |
+| `categories` | list | Category labels; generates category archive pages at `/categories/`. |
+| `read_time` | boolean | Shows an estimated reading time at the top of the post. |
+| `comments` | boolean | Enables the comments section (requires a comments provider configured in `_config.yml`). |
+| `share` | boolean | Shows social sharing buttons at the bottom of the post. |
+| `related` | boolean | Shows a "Related Posts" section at the bottom of the post. |
+
+<Note>
+The `date` field in posts is also encoded in the filename. If the filename date and the front matter `date` disagree, the front matter value takes precedence.
+</Note>
+
+---
+
+## Publications (`_publications/`)
+
+Each publication file represents one paper, book, or conference entry. The `collection` and `category` fields are required for the publications list page to group entries correctly.
+
+```yaml
+---
+title: "Paper Title Number 1"
+collection: publications
+category: manuscripts
+permalink: /publication/2009-10-01-paper-title-number-1
+excerpt: 'This paper is about the number 1. The number 2 is left for future work.'
+date: 2009-10-01
+venue: 'Journal 1'
+slidesurl: 'https://academicpages.github.io/files/slides1.pdf'
+paperurl: 'https://academicpages.github.io/files/paper1.pdf'
+bibtexurl: 'https://academicpages.github.io/files/bibtex1.bib'
+citation: 'Your Name, You. (2009). &quot;Paper Title Number 1.&quot; <i>Journal 1</i>. 1(1).'
+---
+```
+
+| Field | Type | Purpose |
+|-------|------|---------|
+| `collection` | string | Must be `publications` to include this file in the publications collection. |
+| `category` | string | Groups entries under a heading on the publications list. Valid values are defined in `_config.yml` under `publication_category:` — by default `books`, `manuscripts`, and `conferences`. |
+| `venue` | string | Journal name, conference name, or publisher. Shown in list views and on the detail page. |
+| `slidesurl` | URL string | Link to a slides PDF or presentation. Rendered as a button on the publication page. |
+| `paperurl` | URL string | Link to the paper PDF. Rendered as a button on the publication page. |
+| `bibtexurl` | URL string | Link to a `.bib` BibTeX file. Rendered as a button on the publication page. |
+| `citation` | string | Full citation text. Rendered in a smaller font beneath the page body. Supports HTML entities and `<i>` tags for journal name italics. |
+
+<Tip>
+The `publication_category` keys (`books`, `manuscripts`, `conferences`) are defined in `_config.yml`. You can add custom categories there to create additional groupings on the publications list page.
+</Tip>
+
+<Warning>
+If you use MathJax inside the `citation` field, use `\(...\)` delimiters for inline math rather than `$$...$$`. The YAML parser and Markdown renderer can interfere with double-dollar signs in front matter strings.
+</Warning>
+
+---
+
+## Talks (`_talks/`)
+
+```yaml
+---
+title: "Talk 1 on Relevant Topic in Your Field"
+collection: talks
+type: "Talk"
+permalink: /talks/2012-03-01-talk-1
+venue: "UC San Francisco, Department of Testing"
+date: 2012-03-01
+location: "San Francisco, CA, USA"
+---
+```
+
+| Field | Type | Purpose |
+|-------|------|---------|
+| `collection` | string | Must be `talks`. |
+| `type` | string | Free-text label such as `"Talk"`, `"Tutorial"`, or `"Keynote"`. Shown in list views. |
+| `venue` | string | Institution and department or conference name where the talk was given. |
+| `location` | string | City and country of the event. |
+| `date` | date | Date of the talk in `YYYY-MM-DD` format. Controls sort order. |
+
+---
+
+## Teaching (`_teaching/`)
+
+```yaml
+---
+title: "Teaching experience 1"
+collection: teaching
+type: "Undergraduate course"
+permalink: /teaching/2014-spring-teaching-1
+venue: "University 1, Department"
+date: 2014-01-01
+location: "City, Country"
+---
+```
+
+| Field | Type | Purpose |
+|-------|------|---------|
+| `collection` | string | Must be `teaching`. |
+| `type` | string | Course level or format, e.g. `"Undergraduate course"` or `"Workshop"`. |
+| `venue` | string | Institution and department where the course was taught. |
+| `location` | string | City and country. |
+| `date` | date | Start date of the course; controls sort order. |
+
+---
+
+## Portfolio (`_portfolio/`)
+
+```yaml
+---
+title: "Portfolio item number 1"
+excerpt: "Short description of portfolio item number 1<br/><img src='/images/500x300.png'>"
+collection: portfolio
+---
+```
+
+| Field | Type | Purpose |
+|-------|------|---------|
+| `collection` | string | Must be `portfolio`. |
+| `excerpt` | string | Short description shown in the portfolio grid. Supports inline HTML, which allows embedding a thumbnail image. |
+
+---
+
+## Pages (`_pages/`)
+
+Standalone pages live in `_pages/` and support an additional field not available in collections:
+
+```yaml
+---
+permalink: /markdown/
+title: "Markdown"
+author_profile: true
+redirect_from:
+  - /md/
+  - /markdown.html
+---
+```
+
+| Field | Type | Purpose |
+|-------|------|---------|
+| `redirect_from` | list | A list of old URL paths that should redirect to this page's `permalink`. Powered by the `jekyll-redirect-from` plugin. |
+
+---
+
+## How defaults work in `_config.yml`
+
+Rather than repeating common fields in every file, Academic Pages uses Jekyll's `defaults:` block to inject values automatically based on the content type. Here is the full `defaults:` section from `_config.yml`:
+
+```yaml
+defaults:
+  # _posts
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: single
+      author_profile: true
+      read_time: true
+      comments: true
+      share: true
+      related: true
+  # _pages
+  - scope:
+      path: ""
+      type: pages
+    values:
+      layout: single
+      author_profile: true
+  # _teaching
+  - scope:
+      path: ""
+      type: teaching
+    values:
+      layout: single
+      author_profile: true
+      share: true
+      comments: true
+  # _publications
+  - scope:
+      path: ""
+      type: publications
+    values:
+      layout: single
+      author_profile: true
+      share: true
+      comments: true
+  # _portfolio
+  - scope:
+      path: ""
+      type: portfolio
+    values:
+      layout: single
+      author_profile: true
+      share: true
+      comment: true
+  # _talks
+  - scope:
+      path: ""
+      type: talks
+    values:
+      layout: talk
+      author_profile: true
+      share: true
+```
+
+Each `scope` block targets a content type by `type` name. The `values` block lists the front matter fields that will be injected if you have not set them yourself in the file. A value set explicitly in a file's front matter always overrides the default.
+
+<Note>
+You can add your own defaults to this block. For example, if you want all portfolio items to disable `author_profile`, add `author_profile: false` under the portfolio `values:` block in `_config.yml` rather than setting it in every file individually.
+</Note>
+
+---
+
+## Quick reference by content type
+
+<Tabs>
+  <Tab title="Publications">
+```yaml
+---
+title: "Paper Title"
+collection: publications
+category: manuscripts       # books | manuscripts | conferences
+permalink: /publication/slug
+excerpt: 'One-sentence summary.'
+date: 2024-01-15
+venue: 'Journal Name'
+slidesurl: 'https://example.com/slides.pdf'
+paperurl: 'https://example.com/paper.pdf'
+bibtexurl: 'https://example.com/paper.bib'
+citation: 'Author. (2024). &quot;Title.&quot; <i>Journal</i>. 1(1).'
+---
+```
+  </Tab>
+  <Tab title="Talks">
+```yaml
+---
+title: "Talk Title"
+collection: talks
+type: "Talk"
+permalink: /talks/2024-01-15-talk-slug
+venue: "Institution, Department"
+date: 2024-01-15
+location: "City, Country"
+---
+```
+  </Tab>
+  <Tab title="Teaching">
+```yaml
+---
+title: "Course Title"
+collection: teaching
+type: "Graduate course"
+permalink: /teaching/2024-spring-course
+venue: "University, Department"
+date: 2024-01-15
+location: "City, Country"
+---
+```
+  </Tab>
+  <Tab title="Posts">
+```yaml
+---
+title: 'Post Title'
+date: 2024-01-15
+permalink: /posts/2024/01/post-slug/
+tags:
+  - research
+  - tutorial
+---
+```
+  </Tab>
+  <Tab title="Portfolio">
+```yaml
+---
+title: "Project Title"
+excerpt: "Description.<br/><img src='/images/thumb.png'>"
+collection: portfolio
+---
+```
+  </Tab>
+  <Tab title="Pages">
+```yaml
+---
+title: "Page Title"
+permalink: /page-slug/
+author_profile: true
+redirect_from:
+  - /old-path/
+---
+```
+  </Tab>
+</Tabs>

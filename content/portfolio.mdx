@@ -1,0 +1,110 @@
+---
+title: "Adding Portfolio Items to Your Academic Site"
+sidebarTitle: "Portfolio"
+description: "Learn how to create portfolio items in the _portfolio/ collection using Markdown or HTML files, and how they are displayed on the portfolio page."
+---
+
+Portfolio items live in the `_portfolio/` directory. Unlike some other collections, portfolio files can be written as either Markdown (`.md`) or HTML (`.html`) — Jekyll parses each file according to its extension. This flexibility lets you write simple item descriptions in Markdown or build richly structured entries using raw HTML when you need finer control over layout.
+
+## File naming
+
+Portfolio files have no required date-based naming convention. Use descriptive slugs that reflect the project:
+
+```
+_portfolio/portfolio-1.md
+_portfolio/portfolio-2.html
+```
+
+Items on the `/portfolio/` page are rendered in the order Jekyll encounters them. Using a numeric or alphabetical prefix in the filename gives you predictable ordering.
+
+## Front matter fields
+
+Portfolio files use a minimal set of front matter fields:
+
+| Field | Required | Description |
+|---|---|---|
+| `title` | ✅ | Name of the portfolio project. Displayed as the item heading. |
+| `collection` | ✅ | Must be exactly `portfolio`. |
+| `excerpt` | — | Short description shown in the portfolio grid. Supports inline HTML, which is useful for embedding a thumbnail image. |
+
+<Note>
+The `permalink` field is not required for portfolio items. The collection's permalink is automatically set to `/:collection/:path/` in `_config.yml`, so the URL is derived from the filename.
+</Note>
+
+## Embedding a thumbnail image in the excerpt
+
+The `excerpt` field supports inline HTML. The standard pattern for including a preview image alongside the description is:
+
+```yaml
+excerpt: "Short description of portfolio item number 1<br/><img src='/images/500x300.png'>"
+```
+
+The `<br/>` creates a line break between the text description and the image tag. Place your image file in the `/images/` directory and reference it with an absolute path starting with `/images/`.
+
+## Markdown vs HTML files
+
+- **`.md` files** — Write the file body in standard Markdown. Jekyll converts it to HTML at build time.
+- **`.html` files** — Write the file body directly in HTML. Jekyll passes the content through without conversion.
+
+Both formats share the same YAML front matter syntax.
+
+## How portfolio items are displayed
+
+The `/portfolio/` page iterates over `site.portfolio` and renders a card for each entry using the `archive-single` include. Each card shows the `title` and the `excerpt` (including any inline HTML such as an image). Clicking the card title opens the individual portfolio item page, where the full body of the file is rendered.
+
+## Complete examples
+
+A Markdown portfolio item:
+
+```yaml title="_portfolio/portfolio-1.md"
+---
+title: "Portfolio item number 1"
+excerpt: "Short description of portfolio item number 1<br/><img src='/images/500x300.png'>"
+collection: portfolio
+---
+
+This is an item in your portfolio. It can have images or nice text. If you
+name the file .md, it will be parsed as markdown. If you name the file .html,
+it will be parsed as HTML.
+```
+
+An HTML portfolio item (identical front matter, HTML body):
+
+```yaml title="_portfolio/portfolio-2.html"
+---
+title: "Portfolio item number 2"
+excerpt: "Short description of portfolio item number 2 <br/><img src='/images/500x300.png'>"
+collection: portfolio
+---
+
+This is an item in your portfolio. It can have images or nice text. If you
+name the file .md, it will be parsed as markdown. If you name the file .html,
+it will be parsed as HTML.
+```
+
+## Step-by-step: adding a portfolio item
+
+<Steps>
+  <Step title="Choose a file format">
+    Decide whether to use `.md` (Markdown) or `.html` (raw HTML) depending on how much control you need over the item's layout.
+  </Step>
+  <Step title="Create the file">
+    Add a new file to `_portfolio/` with a descriptive slug, e.g. `_portfolio/my-research-tool.md`.
+  </Step>
+  <Step title="Fill in the front matter">
+    Set `title`, `collection: portfolio`, and optionally an `excerpt`. If you want a thumbnail, include an `<img>` tag in the `excerpt` string.
+  </Step>
+  <Step title="Write the body">
+    Below the closing `---`, write the item description. In a `.md` file, use Markdown syntax. In an `.html` file, use HTML.
+  </Step>
+  <Step title="Add images">
+    Place any images referenced by the item in the `/images/` directory and use absolute paths (starting with `/images/`) to reference them.
+  </Step>
+  <Step title="Build and preview">
+    Run `jekyll serve` locally and visit `/portfolio/` to confirm the item appears in the grid with the correct title, excerpt, and thumbnail.
+  </Step>
+</Steps>
+
+<Tip>
+Keep `excerpt` strings short — they appear in the portfolio card grid alongside the thumbnail. Save longer prose for the file body, which is shown only on the individual item page.
+</Tip>
